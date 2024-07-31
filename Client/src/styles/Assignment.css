@@ -1,0 +1,25 @@
+.assignment-container {
+    margin-top: 60px;
+    padding: 0 6%;
+}
+
+.assignment-row {
+    margin-top: 20px;
+}
+
+.assignment-col {
+    display: flex;
+    justify-content: center;
+}
+
+.assignment-card {
+    width: 100%;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.view-course-link {
+    color: #1890ff;
+}
+

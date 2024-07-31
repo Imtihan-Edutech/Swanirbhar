@@ -1,0 +1,227 @@
+.body-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: aliceblue;
+}
+
+.form-container {
+    border-radius: 25px;
+    background-color: #FFFFFF;
+    padding: 30px 40px 40px;
+    width: 60%;
+}
+
+.product-logo img {
+    width: 130px;
+}
+
+.form-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+}
+
+.form-image {
+    width: 100px;
+    background-size: cover;
+    background-position: center;
+    width: 50%;
+    height: 60vh;
+}
+
+.form-data {
+    width: 45%;
+}
+
+.form-heading {
+    font-size: 30px;
+    margin-bottom: 15px;
+}
+
+.form-description {
+    font-size: 15px;
+    color: #686868;
+    margin-bottom: 15px;
+}
+
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+
+.form-input-field {
+    width: 100%;
+}
+
+.agreement {
+    font-weight: 600;
+}
+
+.agreement a {
+    color: red;
+    font-weight: 600;
+}
+
+.form-button {
+    width: 100%;
+}
+
+.forgot-remember-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.remember-me {
+    font-weight: 600;
+}
+
+.forgot-password-link {
+    font-size: 14px;
+    color: red;
+    font-weight: 600;
+}
+
+.account-link-container {
+    text-align: center;
+}
+
+.account-link-text {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-link-btn {
+    text-decoration: none   ;
+    font-weight: 600;
+    padding: 1px 10px;
+    font-size: 14px;
+    color: red;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 25px;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #ccc;
+}
+
+.divider-text {
+    padding: 0 10px;
+    font-size: 13px;
+    color: #79747E;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.social-icon {
+    border: 1px solid blue;
+    padding: 6px 50px 0;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.social-icon img {
+    width: 25px;
+}
+
+.back-to-login-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.back-to-login {
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: black;
+}
+
+.arrow {
+    font-size: 12px;
+    color: black;
+}
+
+@media (max-width: 1200px) {
+    .form-container {
+        width: 70%;
+    }
+    .form-content {
+        padding: 0 20px;
+    }
+    .form-heading {
+        font-size: 28px;
+    }
+    .form-description {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 992px) {
+    .form-container {
+        width: 80%;
+    }
+    .form-content {
+        flex-direction: column;
+        padding: 0 15px;
+    }
+    .form-image {
+        width: 100%;
+        height: 40vh;
+        margin-bottom: 20px;
+    }
+    .form-data {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        width: 90%;
+        padding: 20px 30px;
+    }
+    .form-heading {
+        font-size: 26px;
+    }
+    .form-description {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 576px) {
+    .form-container {
+        width: 95%;
+        padding: 15px 20px;
+    }
+    .form-heading {
+        font-size: 24px;
+    }
+    .form-description {
+        font-size: 12px;
+    }
+    .form-row {
+        flex-direction: column;
+    }
+    .social-icon {
+        padding: 6px 20px 0;
+    }
+}
