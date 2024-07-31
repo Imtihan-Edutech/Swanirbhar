@@ -20,7 +20,7 @@ app.use("/caseStudy",caseStudyRouter)
 app.use("/", aiRouter)
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
 
-app.listen(process.env.PORT, async () => {
+app.listen(process.env.PORT || 3000, async () => {
     try {
         await connection;
         console.log("DB Connected Successfully");
