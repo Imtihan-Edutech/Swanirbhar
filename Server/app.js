@@ -8,12 +8,14 @@ const aiRouter = require("./routes/openAI.route");
 const { articleRouter } = require("./routes/article.route");
 const { blogRouter } = require("./routes/blog.route");
 const { caseStudyRouter } = require("./routes/caseStudy.route");
+const { courseRouter } = require("./routes/course.route");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use("/user", userRouter);
+app.use("/course", courseRouter);
 app.use("/article", articleRouter);
 app.use("/blog", blogRouter);
 app.use("/caseStudy",caseStudyRouter)

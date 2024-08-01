@@ -14,13 +14,22 @@ const baseDir = path.join(__dirname, '../uploads/profileImages');
 const folders = { profilePic: 'profilePic', coverImage: 'coverImage' };
 const upload = multerConfig(baseDir, folders);
 
+userRouter.get("/", async (req, res) => {
+    try {
+        const userDetails = await userModel.find()
+        res.status(200).json(userDetails);
+    } catch (error) {
+        res.status(500).json({ message: "Unable to retrieve user details. Please Try again later." });
+    }
+});
+
 // Get user details by ID
 userRouter.get("/:id", async (req, res) => {
     try {
         const userDetails = await userModel.findById(req.params.id)
         res.status(200).json(userDetails);
     } catch (error) {
-        res.status(400).json({ message: "Failed to get user details. Try again later." });
+        res.status(500).json({ message: "Unable to retrieve user details. Please Try again later." });
     }
 });
 
@@ -31,7 +40,7 @@ userRouter.post("/sendVerificationOTP", async (req, res) => {
         const existingUserByEmail = await userModel.findOne({ email });
 
         if (existingUserByEmail) {
-            return res.status(400).json({ message: "Email already exists, Please Login" });
+            return res.status(400).json({ message: "Email already exists, Please login" });
         }
 
         const verificationOTP = Math.floor(100000 + Math.random() * 900000).toString();
@@ -77,7 +86,7 @@ userRouter.post("/sendVerificationOTP", async (req, res) => {
         await userDetails.save();
         res.status(200).json({ message: 'OTP has been sent to your email address.' });
     } catch (error) {
-        res.status(500).json({ message: "An error occurred while sending the OTP. Try again later." });
+        res.status(500).json({ message: "Unable to send OTP. Please Try again later." });
     }
 });
 
@@ -90,12 +99,12 @@ userRouter.put("/register/:email", async (req, res) => {
         const userDetails = await userModel.findOne({ email });
 
         if (userDetails.verificationOTP !== verificationOTP) {
-            return res.status(400).json({ message: "Incorrect OTP. Please Check It Again" });
+            return res.status(400).json({ message: "Invalid OTP. Please try again." });
         }
 
         bcrypt.hash(password, 10, async (err, hash) => {
             if (err) {
-                return res.status(500).json({ message: "Error hashing password" });
+                return res.status(500).json({ message: "Error while hashing the password" });
             }
 
             userDetails.firstname = firstname;
@@ -105,10 +114,10 @@ userRouter.put("/register/:email", async (req, res) => {
             userDetails.verificationOTP = null;
 
             await userDetails.save();
-            return res.status(200).json({ message: "Registration Successful, You Can Login Now" });
+            return res.status(200).json({ message: "Registration successful, You can now login" });
         });
     } catch (error) {
-        return res.status(500).json({ message: "Registration Failed, Try again later." });
+        return res.status(500).json({ message: "Registration Failed, Please Try again later." });
     }
 });
 
@@ -118,19 +127,19 @@ userRouter.post("/login", async (req, res) => {
     try {
         const user = await userModel.findOne({ email }).select('+password');
         if (!user) {
-            return res.status(400).json({ message: "Email does not exist, Please Sign Up" });
+            return res.status(400).json({ message: "Email does not exist, Please sign Up" });
         }
 
-        const result = bcrypt.compare(password, user.password);
+        const result = await bcrypt.compare(password, user.password);
         if (result) {
-            const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY);
+            const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, { expiresIn: '12h' });
             res.status(200).json({ message: "Login Successful", token, userId: user._id });
         } else {
-            res.status(400).json({ message: "Wrong Email or Password" });
+            res.status(400).json({ message: "Incorrect Email or Password" });
         }
 
     } catch (error) {
-        res.status(400).json({ message: "Login Failed. Please try again later." });
+        res.status(500).json({ message: "Login Failed. Please try again later." });
     }
 });
 
@@ -181,7 +190,7 @@ userRouter.put("/sendResetPasswordOTP", async (req, res) => {
         await transporter.sendMail(mailOptions);
         res.status(200).json({ message: 'OTP has been sent to your email address.' });
     } catch (error) {
-        res.status(500).json({ message: 'Failed to send OTP. Try again later.' });
+        res.status(500).json({ message: 'Unable to send OTP. Please Try again later.' });
     }
 });
 
@@ -203,7 +212,7 @@ userRouter.post("/verifyOTP/:email", async (req, res) => {
         res.status(200).json({ message: "OTP verified successfully." });
 
     } catch (error) {
-        res.status(500).json({ message: "Failed to verify OTP. Try again later." });
+        res.status(500).json({ message: "Unable to verify OTP. Please try again later" });
     }
 });
 
@@ -218,7 +227,7 @@ userRouter.put("/resetPassword", async (req, res) => {
 
         bcrypt.hash(newPassword, 10, async (err, hashedPassword) => {
             if (err) {
-                return res.status(500).json({ message: "Error hashing password" });
+                return res.status(500).json({ message: "Error while hashing the password" });
             }
 
             existingUser.password = hashedPassword;
@@ -228,12 +237,12 @@ userRouter.put("/resetPassword", async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({ message: 'Failed to update password. Try again later.' });
+        res.status(500).json({ message: 'Unable to update password. Please try again later' });
     }
 });
 
 // update the etails for the user 
-userRouter.put("/updateDetails/:id", upload.fields([{ name: 'profilePic' }, { name: 'coverImage' }]),validateFileSize, async (req, res) => {
+userRouter.put("/updateDetails/:id", upload.fields([{ name: 'profilePic' }, { name: 'coverImage' }]), validateFileSize, async (req, res) => {
     const { id } = req.params;
     const { firstname, lastname, phoneNumber, designation, educations, skills, experience, facebook, linkedin, github, twitter, youtube } = req.body;
 
@@ -266,7 +275,7 @@ userRouter.put("/updateDetails/:id", upload.fields([{ name: 'profilePic' }, { na
 
         res.status(200).json({ message: "User details updated successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Failed to update user details. Try again later." });
+        res.status(500).json({ message: "Unable to update user details. Please Try again later." });
     }
 });
 
@@ -320,14 +329,6 @@ userRouter.put("/updateDetails/:id", upload.fields([{ name: 'profilePic' }, { na
 //     }
 // });
 
-userRouter.delete('/:id', async (req, res) => {
-    try {
-        await userModel.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: "Account deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ message: 'Failed to Delete Account. Please try again later.' });
-    }
-})
 
 
 module.exports = {

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Button, Checkbox, Form, Input, Typography, message } from 'antd';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import "../styles/login-register.css";
 import loginImage from "../images/login.png";
 import facebook from "../images/facebook.png";
@@ -15,8 +14,8 @@ const { Text } = Typography;
 
 const LoginForm = () => {
     const [form] = Form.useForm();
-    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const onFinish = async (formData) => {
         setLoading(true);
@@ -29,6 +28,8 @@ const LoginForm = () => {
         } catch (error) {
             if (error.response && error.response.data) {
                 message.error(error.response.data.message);
+            } else {
+                message.error("An unexpected error occurred. Please try again later.");
             }
         }
         setLoading(false);

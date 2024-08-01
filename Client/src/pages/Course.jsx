@@ -1,37 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Row, Button, Drawer, Form, Input, Spin, Pagination, message, Select, Upload, Empty, DatePicker, Checkbox, TreeSelect, Tabs, List } from 'antd';
-import { HeartOutlined, HeartFilled } from '@ant-design/icons';
+import { Card, Row, Button, Drawer, Form, Input, Spin, Pagination, message, Select, Upload, Empty, DatePicker, Checkbox, TreeSelect, Tabs, List, Steps } from 'antd';
 import axios from 'axios';
 import { baseUrl } from '../App';
 import '../styles/Course.css';
-import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHSquare } from '@fortawesome/free-solid-svg-icons';
 import { categoryTreeData, languages } from '../utils/ExtraUtils';
 
 const { Meta } = Card;
 const { Option } = Select;
+const { Step } = Steps;
 
 const Course = () => {
     const [courses, setCourses] = useState([]);
     const [visible, setVisible] = useState(false);
     const [form] = Form.useForm();
     const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
     const [loading, setLoading] = useState(false);
-
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         fetchCourses();
+        fetchUserDetails();
     }, []);
 
     const fetchCourses = async (page, limit) => {
         setLoading(true);
         try {
             const response = await axios.get(`${baseUrl}/course`, {
-                headers: {
-                    Authorization: token
-                },
+                headers: { Authorization: token },
                 params: {
                     page,
                     limit,
@@ -49,11 +46,40 @@ const Course = () => {
                 }
             });
             setCourses(response.data.courses);
-
         } catch (error) {
-            message.error(error.response.data.message);
+            if (error.response && error.response.data) {
+                message.error(error.response.data.message);
+            }
         }
         setLoading(false);
+    };
+
+    const fetchUserDetails = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`${baseUrl}/user`);
+            console.log(response.data);
+            setUsers(response.data);
+        } catch (error) {
+            if (error.response && error.response.data) {
+                message.error(error.response.data.message);
+            }
+        }
+        setLoading(false);
+    };
+
+    const handleNext = () => {
+        form.validateFields()
+            .then(() => {
+                setCurrentStep(currentStep + 1);
+            })
+            .catch(errorInfo => {
+                console.log('Validation Failed:', errorInfo);
+            });
+    };
+
+    const handlePrev = () => {
+        setCurrentStep(currentStep - 1);
     };
 
     const addCourse = async (formData) => {
@@ -63,7 +89,8 @@ const Course = () => {
             const {
                 courseName, courseType, shortdescription, description, category, startDate,
                 price, discount, level, language, duration, hasCompletionCertificate, hasAssignments,
-                objectives, hasSupport, patnerInstructor, tags, faq, thumbnail, coverImage, demoVideo, notes } = formData;
+                objectives, hasSupport, patnerInstructor, tags, faq, thumbnail, coverImage, demoVideo
+            } = formData;
 
             const courseData = new FormData();
             courseData.append('courseName', courseName);
@@ -76,12 +103,12 @@ const Course = () => {
             courseData.append('discount', parseFloat(discount));
             courseData.append('level', level);
             courseData.append('language', language);
-            courseData.append('duration', parseFloat(duration));;
+            courseData.append('duration', parseFloat(duration));
             courseData.append('hasCompletionCertificate', hasCompletionCertificate);
             courseData.append('hasAssignments', hasAssignments);
-            courseData.append('objectives', JSON.stringify(objectives));
             courseData.append('hasSupport', hasSupport);
-            courseData.append('patnerInstructor', patnerInstructor);
+            courseData.append('objectives', JSON.stringify(objectives));
+            courseData.append('patnerInstructor', JSON.stringify(patnerInstructor));
             courseData.append('tags', JSON.stringify(tags));
             courseData.append('faq', JSON.stringify(faq));
 
@@ -94,9 +121,6 @@ const Course = () => {
             if (demoVideo) {
                 courseData.append('demoVideo', demoVideo[0].originFileObj);
             }
-            if (notes) {
-                courseData.append('notes', notes[0].originFileObj);
-            }
 
             const response = await axios.post(`${baseUrl}/course`, courseData, {
                 headers: {
@@ -108,10 +132,11 @@ const Course = () => {
             form.resetFields();
             setVisible(false);
             message.success(response.data.message);
-
             fetchCourses();
         } catch (error) {
-            message.error(error.response.data.message);
+            if (error.response && error.response.data) {
+                message.error(error.response.data.message);
+            }
         }
         setLoading(false);
     };
@@ -123,10 +148,7 @@ const Course = () => {
         <div className="course-container">
             <div className="course-list-container">
                 <div className="top-conatiner">
-                    <Input.Search
-                        placeholder="Search courses"
-                        style={{ width: 350 }}
-                    />
+                    <Input.Search placeholder="Search courses" style={{ width: 350 }} />
                     <Button type="primary" onClick={showDrawer} className="create-course-button">
                         <FontAwesomeIcon icon={faHSquare} /> Create Course
                     </Button>
@@ -141,21 +163,12 @@ const Course = () => {
                     dataSource={courses}
                     renderItem={(item) => (
                         <List.Item key={item._id}>
-                            <Card hoverable
-                                cover={<img alt="Course Image" src={`${baseUrl}/uploads/courseImages/thumbnails/${item.thumbnail}`} />}
-                            >
-                                <Meta
-                                    title={item.courseName}
-                                    description={item.description}
-                                />
+                            <Card hoverable cover={<img alt="Course Image" src={`${baseUrl}/uploads/courseImages/thumbnails/${item.thumbnail}`} />}>
+                                <Meta title={item.courseName} description={item.description} />
                             </Card>
                         </List.Item>
                     )}
                 />
-            </div>
-
-            <div className="filter-conatiner">
-
             </div>
 
             <Drawer
@@ -282,47 +295,30 @@ const Course = () => {
 
                     <div style={{ display: 'flex', gap: '16px' }}>
                         <Form.Item name="thumbnail" label="Thumbnail" valuePropName="fileList" rules={[{ required: true, message: 'Please upload the thumbnail' }]} getValueFromEvent={e => e.fileList} style={{ flex: 1 }}>
-                            <Upload
-                                beforeUpload={() => false}
-                                maxCount={1}
-                                listType="picture"
-                            >
+                            <Upload beforeUpload={() => false} maxCount={1} listType="picture">
                                 <Button>Upload Thumbnail</Button>
                             </Upload>
                         </Form.Item>
 
                         <Form.Item name="coverImage" label="Cover Image" valuePropName="fileList" rules={[{ required: true, message: 'Please upload the cover image' }]} getValueFromEvent={e => e.fileList} style={{ flex: 1 }}>
-                            <Upload
-                                beforeUpload={() => false}
-                                maxCount={1}
-                                listType="picture"
-                            >
+                            <Upload beforeUpload={() => false} maxCount={1} listType="picture">
                                 <Button>Upload Cover Image</Button>
                             </Upload>
                         </Form.Item>
                     </div>
 
                     <Form.Item name="demoVideo" label="Demo Video" valuePropName="fileList" rules={[{ required: true, message: 'Please upload the demo video' }]} getValueFromEvent={e => e.fileList}>
-                        <Upload
-                            beforeUpload={() => false}
-                            maxCount={1}
-                            listType="picture"
-                        >
+                        <Upload beforeUpload={() => false} maxCount={1} listType="picture">
                             <Button>Upload Demo Video</Button>
                         </Upload>
                     </Form.Item>
 
-                    <Form.Item name="notes" label="Notes" valuePropName="fileList" rules={[{ required: true, message: 'Please upload the notes' }]} getValueFromEvent={e => e.fileList}>
-                        <Upload
-                            beforeUpload={() => false}
-                            listType="picture"
-                        >
-                            <Button>Upload Notes</Button>
-                        </Upload>
-                    </Form.Item>
-
-                    <Form.Item name="patnerInstructor" label="Partner Instructor" rules={[{ required: true, message: 'Please enter the partner instructor details' }]}>
-                        <Input placeholder='Partner Instructor' />
+                    <Form.Item name="patnerInstructor" label="Partner Instructors" rules={[{ required: true, message: 'Please select the partner instructors' }]}>
+                        <Select mode="multiple" placeholder='Select Partner Instructors'>
+                            {users.map(user => (
+                                <Option key={user._id} value={user._id}>{user.firstname} {user.lastname}</Option>
+                            ))}
+                        </Select>
                     </Form.Item>
 
                     <Form.List name="tags">
@@ -349,6 +345,7 @@ const Course = () => {
                                                 </Button>
                                             }
                                         />
+                                        
                                     </Form.Item>
                                 ))}
                                 <Form.Item>
@@ -364,33 +361,35 @@ const Course = () => {
                         {(fields, { add, remove }) => (
                             <>
                                 {fields.map(({ key, name, fieldKey, ...restField }) => (
-                                    <div key={key} style={{ display: 'flex', gap: '16px' }}>
-                                        <Form.Item
-                                            {...restField}
-                                            name={[name, 'question']}
-                                            fieldKey={[fieldKey, 'question']}
-                                            rules={[{ required: true, message: 'Please enter the question' }]}
-                                            style={{ flex: 1 }}
-                                        >
-                                            <Input placeholder='Question' />
-                                        </Form.Item>
-                                        <Form.Item
-                                            {...restField}
-                                            name={[name, 'answer']}
-                                            fieldKey={[fieldKey, 'answer']}
-                                            rules={[{ required: true, message: 'Please enter the answer' }]}
-                                            style={{ flex: 2 }}
-                                        >
-                                            <Input placeholder='Answer' />
-                                        </Form.Item>
-                                        <Button
-                                            type="link"
-                                            onClick={() => remove(name)}
-                                            style={{ padding: '0', border: 'none', height: 'auto' }}
-                                        >
-                                            Remove
-                                        </Button>
-                                    </div>
+                                    <Form.Item key={key} style={{ marginBottom: '8px' }}>
+                                        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'question']}
+                                                fieldKey={[fieldKey, 'question']}
+                                                rules={[{ required: true, message: 'Please enter the question' }]}
+                                                style={{ flex: 1, margin: 0 }}
+                                            >
+                                                <Input placeholder='Question' />
+                                            </Form.Item>
+                                            <Form.Item
+                                                {...restField}
+                                                name={[name, 'answer']}
+                                                fieldKey={[fieldKey, 'answer']}
+                                                rules={[{ required: true, message: 'Please enter the answer' }]}
+                                                style={{ flex: 2, margin: 0 }}
+                                            >
+                                                <Input placeholder='Answer' />
+                                            </Form.Item>
+                                            <Button
+                                                type="link"
+                                                onClick={() => remove(name)}
+                                                style={{ padding: '0', border: 'none', height: 'auto' }}
+                                            >
+                                                Remove
+                                            </Button>
+                                        </div>
+                                    </Form.Item>
                                 ))}
                                 <Form.Item>
                                     <Button type="dashed" onClick={() => add()} block>

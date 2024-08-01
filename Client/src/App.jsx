@@ -6,7 +6,8 @@ export const baseUrl = "http://localhost:8080";
 export const token = localStorage.getItem("token");
 export const userId = localStorage.getItem("userId");
 
-// https://swanirbhar-lms-backend.onrender.com;
+// http://13.233.44.111;
+// http://localhost:8080
 
 export const axiosInstance = axios.create({
   headers: {
