@@ -12,6 +12,11 @@ const { courseRouter } = require("./routes/course.route");
 
 const app = express();
 
+app.get('/',(req,res),async()=>{
+    res.json("Welcome To Swanirbhar")
+
+})
+
 app.use(cors());
 app.use(express.json());
 app.use("/user", userRouter);
