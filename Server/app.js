@@ -12,7 +12,7 @@ const { courseRouter } = require("./routes/course.route");
 
 const app = express();
 
-app.get('/',(req,res),async()=>{
+app.get('/',async(req,res)=>{
     res.json("Welcome To Swanirbhar")
 
 })
