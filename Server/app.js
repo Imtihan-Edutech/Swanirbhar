@@ -12,19 +12,19 @@ const { courseRouter } = require("./routes/course.route");
 
 const app = express();
 
-app.get('/',async(req,res)=>{
-    res.json("Welcome To Swanirbhar");
-})
-
 app.use(cors());
 app.use(express.json());
 app.use("/user", userRouter);
 app.use("/course", courseRouter);
 app.use("/article", articleRouter);
 app.use("/blog", blogRouter);
-app.use("/caseStudy",caseStudyRouter)
+app.use("/caseStudy", caseStudyRouter)
 app.use("/", aiRouter)
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
+
+app.get('/', (req, res) => {
+    res.json("Welcome To Swanirbhar");
+})
 
 app.listen(process.env.PORT || 3000, async () => {
     try {
