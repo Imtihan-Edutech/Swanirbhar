@@ -13,8 +13,7 @@ const { courseRouter } = require("./routes/course.route");
 const app = express();
 
 app.get('/',async(req,res)=>{
-    res.json("Welcome To Swanirbhar")
-
+    res.json("Welcome To Swanirbhar");
 })
 
 app.use(cors());
