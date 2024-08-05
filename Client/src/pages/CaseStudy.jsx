@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Drawer, Form, Input as AntInput, TreeSelect, Upload, message, Spin, Empty } from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import "../styles/CaseStudy.css";
 import axios from 'axios';
 import { baseUrl } from '../App';
@@ -149,7 +147,7 @@ const CaseStudy = () => {
                         onChange={(value) => setSelectedCategory(value)}
                     />
                     <Button type="primary" className="add-caseStudy-button" onClick={showDrawer}>
-                        <FontAwesomeIcon icon={faPlus} /> Add Case Study
+                       Add Case Study
                     </Button>
                 </div>
             </div>

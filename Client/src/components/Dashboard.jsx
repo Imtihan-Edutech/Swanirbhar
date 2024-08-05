@@ -100,9 +100,7 @@ const Dashboard = () => {
             setUser(response.data);
 
         } catch (error) {
-            if (error.response && error.response.data) {
-                message.error(error.response.data.message);
-            }
+            message.error(error.response?.data?.message);
         }
     };
 
@@ -112,9 +110,7 @@ const Dashboard = () => {
             setCourseCount(response.data.totalData);
         }
         catch (error) {
-            if (error.response && error.response.data) {
-                message.error(error.response.data.message);
-            }
+            message.error(error.response?.data?.message);
         }
     }
 

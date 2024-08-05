@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Drawer, Form, Input as AntInput, TreeSelect, Upload, message, Spin, Empty, Modal } from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import '../styles/Articles.css';
-import axios from 'axios';
-import { baseUrl } from '../App';
+import { axiosInstance, baseUrl } from '../App';
 import { categoryTreeData } from '../utils/ExtraUtils';
 import { formatDistanceToNow } from 'date-fns';
 import { BookOutlined, ShareAltOutlined } from '@ant-design/icons';
@@ -17,7 +14,6 @@ const Articles = () => {
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState(null);
-  const token = localStorage.getItem('token');
   const [articleData, setArticleData] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -33,21 +29,15 @@ const Articles = () => {
   const getArticles = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${baseUrl}/article`, {
-        headers: {
-          'Authorization': token,
-        },
+      const response = await axiosInstance.get(`${baseUrl}/article`, {
         params: {
           title: searchTerm,
           category: selectedCategory
         }
       });
-      console.log(response.data.articles);
       setArticleData(response.data.articles);
     } catch (error) {
-      if (error.response && error.response.data) {
-        message.error(error.response.data.message);
-      }
+      message.error(error.response?.data?.message);
     }
     setLoading(false);
   };
@@ -67,9 +57,8 @@ const Articles = () => {
         articleData.append('coverImage', coverImage[0].originFileObj);
       }
 
-      const response = await axios.post(`${baseUrl}/article`, articleData, {
+      const response = await axiosInstance.post(`${baseUrl}/article`, articleData, {
         headers: {
-          'Authorization': token,
           'Content-Type': 'multipart/form-data',
         },
       });
@@ -79,9 +68,7 @@ const Articles = () => {
       setVisible(false);
       form.resetFields();
     } catch (error) {
-      if (error.response && error.response.data) {
-        message.error(error.response.data.message);
-      }
+      message.error(error.response?.data?.message);
     }
     setLoading(false);
   };
@@ -128,7 +115,7 @@ const Articles = () => {
             onChange={(value) => setSelectedCategory(value)}
           />
           <Button type="primary" className="add-article-button" onClick={showDrawer}>
-            <FontAwesomeIcon icon={faPlus} /> Add Article
+            Add Article
           </Button>
         </div>
       </div>
@@ -137,7 +124,9 @@ const Articles = () => {
         {loading ? (
           <Spin className="loading-spinner" />
         ) : articleData.length === 0 ? (
-          <Empty className='empty-results-container' description="No Articles Available" />
+          <div className="empty-results">
+            <Empty description="No Articles Available" />
+          </div>
         ) : (
           <div className="article-grid">
             {articleData.map((article) => (
@@ -146,7 +135,6 @@ const Articles = () => {
                   <img src={`${baseUrl}/uploads/articleImages/${article.coverImage}`} alt="cover" className="coverImage" />
                 </div>
                 <div className="article-content">
-
                   <h3 className="article-title">{article.title}</h3>
                   <p className="article-description">{article.description}</p>
                   <div className="article-details">

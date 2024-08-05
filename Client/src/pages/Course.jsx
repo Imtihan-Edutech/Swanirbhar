@@ -3,8 +3,6 @@ import { Card, Row, Button, Drawer, Form, Input, Spin, Pagination, message, Sele
 import axios from 'axios';
 import { baseUrl } from '../App';
 import '../styles/Course.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHSquare } from '@fortawesome/free-solid-svg-icons';
 import { categoryTreeData, languages } from '../utils/ExtraUtils';
 
 const { Meta } = Card;
@@ -150,10 +148,10 @@ const Course = () => {
                 <div className="top-conatiner">
                     <Input.Search placeholder="Search courses" style={{ width: 350 }} />
                     <Button type="primary" onClick={showDrawer} className="create-course-button">
-                        <FontAwesomeIcon icon={faHSquare} /> Create Course
+                        Create Course
                     </Button>
                     <Button type="primary" className="manage-button">
-                        <FontAwesomeIcon icon={faHSquare} /> Manage
+                         Manage
                     </Button>
                 </div>
 

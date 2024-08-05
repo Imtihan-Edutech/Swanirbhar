@@ -4,11 +4,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import "../styles/login-register.css";
 import { baseUrl } from '../App';
-import logo from "../images/logo.webp";
 import facebook from "../images/facebook.png";
 import google from "../images/google.png";
 import apple from "../images/apple.png";
-import registerImage from "../images/register.png";
+import registerImage from "../images/login.svg";
 
 const { Text } = Typography;
 
@@ -53,106 +52,104 @@ const RegisterForm = () => {
     return (
         <div className="body-container">
             <div className="form-container">
-                <div className="product-logo">
-                    <img src={logo} alt="Logo" />
+                <div className="image-container">
+                    <img src={registerImage} alt="" />
                 </div>
-                <div className="form-content">
-                    <div className="form-image" style={{ backgroundImage: `url(${registerImage})` }}></div>
-                    <div className="form-data">
-                        <h2 className="form-heading">Sign Up</h2>
-                        <p className="form-description">Let’s get you all set up so you can access your personal account.</p>
-                        {!otpSent ? (
-                            <Form form={registerForm} onFinish={sendVerificationOTP} layout="vertical">
-                                <div className="form-row">
-                                    <Form.Item name="firstname" rules={[{ required: true, message: 'First name is required' }]} style={{ flex: "1" }}>
-                                        <Input className='form-input-field' placeholder="First name" />
-                                    </Form.Item>
-                                    <Form.Item name="lastname" rules={[{ required: true, message: 'Last name is required' }]} style={{ flex: "1" }}>
-                                        <Input className='form-input' placeholder="Last name" />
-                                    </Form.Item>
-                                </div>
-                                <div className="form-row">
-                                    <Form.Item name="email" rules={[
-                                        { required: true, message: 'Email is required' },
-                                        { type: 'email', message: 'Invalid email format' }
-                                    ]} style={{ flex: "1" }}>
-                                        <Input placeholder="Email" />
-                                    </Form.Item>
-                                    <Form.Item name="phoneNumber" style={{ flex: "1" }} rules={[
-                                        { required: true, message: 'Phone number is required' },
-                                        { len: 10, message: 'Phone number must consist of 10 digits' }
-                                    ]}>
-                                        <Input placeholder="Phone number" />
-                                    </Form.Item>
-                                </div>
-                                <Form.Item name="password" rules={[
-                                    { required: true, message: 'Password is required' },
-                                    { min: 8, message: 'Password must be at least 8 characters' }
+
+                <div className="form-data">
+                    <h2 className="form-heading">Sign Up</h2>
+                    <p className="form-description">Let’s get you all set up so you can access your personal account.</p>
+                    {!otpSent ? (
+                        <Form form={registerForm} onFinish={sendVerificationOTP} layout="vertical">
+                            <div className="form-row">
+                                <Form.Item name="firstname" rules={[{ required: true, message: 'First name is required' }]} style={{ flex: "1" }}>
+                                    <Input className='form-input-field' placeholder="First name" />
+                                </Form.Item>
+                                <Form.Item name="lastname" rules={[{ required: true, message: 'Last name is required' }]} style={{ flex: "1" }}>
+                                    <Input className='form-input' placeholder="Last name" />
+                                </Form.Item>
+                            </div>
+                            <div className="form-row">
+                                <Form.Item name="email" rules={[
+                                    { required: true, message: 'Email is required' },
+                                    { type: 'email', message: 'Invalid email format' }
+                                ]} style={{ flex: "1" }}>
+                                    <Input placeholder="Email" />
+                                </Form.Item>
+                                <Form.Item name="phoneNumber" style={{ flex: "1" }} rules={[
+                                    { required: true, message: 'Phone number is required' },
+                                    { len: 10, message: 'Phone number must consist of 10 digits' }
                                 ]}>
-                                    <Input.Password placeholder="Password" />
+                                    <Input placeholder="Phone number" />
                                 </Form.Item>
-                                <Form.Item name="confirmPassword" dependencies={['password']} hasFeedback
-                                    rules={[
-                                        { required: true, message: 'Please confirm your password' },
-                                        ({ getFieldValue }) => ({
-                                            validator(_, value) {
-                                                if (!value || getFieldValue('password') === value) {
-                                                    return Promise.resolve();
-                                                }
-                                                return Promise.reject();
-                                            },
-                                        }),
-                                    ]}>
-                                    <Input.Password placeholder="Confirm password" />
-                                </Form.Item>
-                                <Form.Item
-                                    name="agreement"
-                                    valuePropName="checked"
-                                    rules={[
-                                        { validator: (_, value) => value ? Promise.resolve() : Promise.reject(new Error('You must accept the agreement')) },
-                                    ]}>
-                                    <Checkbox className="agreement">
-                                        I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policies</a>
-                                    </Checkbox>
-                                </Form.Item>
-                                <Form.Item>
-                                    <Button type="primary" className="form-button" loading={loading} htmlType="submit">
-                                        Create Account
-                                    </Button>
-                                </Form.Item>
-                            </Form>
-                        ) : (
-                            <Form form={otpForm} onFinish={handleRegister} layout="vertical">
-                                <Form.Item name="verificationOTP" rules={[{ required: true, message: 'Please input the OTP sent to your email!' }]}>
-                                    <Input.OTP placeholder="Enter OTP" />
-                                </Form.Item>
-                                <Form.Item>
-                                    <Button type="primary" className="form-button" loading={loading} htmlType="submit">
-                                        Verify Code
-                                    </Button>
-                                </Form.Item>
-                            </Form>
-                        )}
+                            </div>
+                            <Form.Item name="password" rules={[
+                                { required: true, message: 'Password is required' },
+                                { min: 8, message: 'Password must be at least 8 characters' }
+                            ]}>
+                                <Input.Password placeholder="Password" />
+                            </Form.Item>
+                            <Form.Item name="confirmPassword" dependencies={['password']} hasFeedback
+                                rules={[
+                                    { required: true, message: 'Please confirm your password' },
+                                    ({ getFieldValue }) => ({
+                                        validator(_, value) {
+                                            if (!value || getFieldValue('password') === value) {
+                                                return Promise.resolve();
+                                            }
+                                            return Promise.reject();
+                                        },
+                                    }),
+                                ]}>
+                                <Input.Password placeholder="Confirm password" />
+                            </Form.Item>
+                            <Form.Item
+                                name="agreement"
+                                valuePropName="checked"
+                                rules={[
+                                    { validator: (_, value) => value ? Promise.resolve() : Promise.reject(new Error('You must accept the agreement')) },
+                                ]}>
+                                <Checkbox className="agreement">
+                                    I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policies</a>
+                                </Checkbox>
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" className="form-button" loading={loading} htmlType="submit">
+                                    Create Account
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    ) : (
+                        <Form form={otpForm} onFinish={handleRegister} layout="vertical">
+                            <Form.Item name="verificationOTP" rules={[{ required: true, message: 'Please input the OTP sent to your email!' }]}>
+                                <Input.OTP placeholder="Enter OTP" />
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" className="form-button" loading={loading} htmlType="submit">
+                                    Verify Code
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    )}
 
-                        <div className="account-link-container">
-                            <Text className="account-link-text">Already have an account?</Text>
-                            <Link to="/login" className="form-link-btn">Login</Link>
+                    <div className="account-link-container">
+                        <Text className="account-link-text">Already have an account?</Text>
+                        <Link to="/login" className="form-link-btn">Login</Link>
+                    </div>
+
+                    <div className="divider">
+                        <span className="divider-text">Or Sign Up with</span>
+                    </div>
+
+                    <div className="social-icons">
+                        <div className="social-icon">
+                            <img src={facebook} alt="Facebook" />
                         </div>
-
-                        <div className="divider">
-                            <span className="divider-text">Or Sign Up with</span>
+                        <div className="social-icon">
+                            <img src={google} alt="Google" />
                         </div>
-
-                        <div className="social-icons">
-                            <div className="social-icon">
-                                <img src={facebook} alt="Facebook" />
-                            </div>
-                            <div className="social-icon">
-                                <img src={google} alt="Google" />
-                            </div>
-                            <div className="social-icon">
-                                <img src={apple} alt="Apple" />
-                            </div>
+                        <div className="social-icon">
+                            <img src={apple} alt="Apple" />
                         </div>
                     </div>
                 </div>

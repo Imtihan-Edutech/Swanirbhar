@@ -1,17 +1,17 @@
 .articles-container {
-    padding: 1% 0 2% 1.5%;
+    padding: 1% 2% ;
 }
 
 .articles-header {
+    position: fixed;
+    
+    width: 100%;
+    z-index: 1000; 
+    background: white; /* Background color to cover the content behind it */
+    padding: 10px 20px; /* Adjust padding as needed */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better visibility */
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: sticky;
-    top: 0;
-    padding: 0 0 20px;
-    background-color: #f4f7fe;
-    box-shadow: none;
-}
+  }
 
 .search-field {
     width: 20%;

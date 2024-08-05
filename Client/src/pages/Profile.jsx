@@ -33,6 +33,8 @@ const Profile = () => {
         try {
             const response = await axiosInstance.get(`${baseUrl}/course/myEnrolledCourses`);
             setCourseCount(response.data.totalData);
+            console.log(response.data.totalData);
+            
         }
         catch (error) {
             if (error.response && error.response.data) {
@@ -47,19 +49,6 @@ const Profile = () => {
         try {
             const response = await axios.get(`${baseUrl}/user/${userId}`);
             setUser(response.data);
-
-            if (!response.data.educations || response.data.educations.length === 0) {
-                message.warning('Education details are not provided.');
-            }
-            if (!response.data.skills || response.data.skills.length === 0) {
-                message.warning('Skills details are not provided.');
-            }
-            if (!response.data.experience || response.data.experience.length === 0) {
-                message.warning('Experience details are not provided.');
-            }
-            if (!response.data.profilePic) {
-                message.warning('Profile picture is not provided.');
-            }
         } 
         catch (error) {
             if (error.response && error.response.data) {

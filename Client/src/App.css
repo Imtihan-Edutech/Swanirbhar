@@ -10,9 +10,10 @@
     height: 60vh;
 }
 
-.empty-results-container {
+.empty-results {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 60vh;
 }
+  
