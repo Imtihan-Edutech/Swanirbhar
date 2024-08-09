@@ -352,19 +352,19 @@ const Profile = () => {
                             </>
                         )}
                     </Form.List>
-                    <Form.Item name="facebook">
+                    <Form.Item name="facebook" label="Facebook :" style={{fontWeight:"600"}}>
                         <Input placeholder='Facebook Link' />
                     </Form.Item>
-                    <Form.Item name="linkedin">
+                    <Form.Item name="linkedin" label="LinkedIn :" style={{fontWeight:"600"}}>
                         <Input placeholder='LinkedIn Link' />
                     </Form.Item>
-                    <Form.Item name="github">
+                    <Form.Item name="github" label="Github :" style={{fontWeight:"600"}}>
                         <Input placeholder='GitHub Link' />
                     </Form.Item>
-                    <Form.Item name="twitter">
+                    <Form.Item name="twitter" label="Twitter :" style={{fontWeight:"600"}}>
                         <Input placeholder='Twitter Link' />
                     </Form.Item>
-                    <Form.Item name="youtube">
+                    <Form.Item name="youtube" label="Youtube :" style={{fontWeight:"600"}}>
                         <Input placeholder='YouTube Link' />
                     </Form.Item>
                     <Form.Item>

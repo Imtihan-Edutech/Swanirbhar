@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import logo from "../images/logo.webp";
-import resetPassword from "../images/reset-password.png";
+import resetPassword from "../images/resetPassword.svg";
 import { Button, Form, Input, message } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -29,15 +28,13 @@ const SetPassword = () => {
     return (
         <div className="body-container">
             <div className='form-container'>
-                <div className="product-logo">
-                    <img src={logo} alt="Logo" />
+                <div className="image-container">
+                    <img src={resetPassword} alt="Logo" />
                 </div>
-                <div className="form-content">
-                    <div className="form-image" style={{ backgroundImage: `url(${resetPassword})` }}></div>
-                    <div className="form-data">
+                <div className="form-data">
                         <div className='back-to-login-container'>
                             <Link className='back-to-login' to="/login">
-                                <span className='arrow'><i class="fa-solid fa-less-than"></i></span>
+                                <span className='arrow'>&lt;</span>
                                 Back to login
                             </Link>
                         </div>
@@ -76,7 +73,6 @@ const SetPassword = () => {
                             </Form.Item>
                         </Form>
                     </div>
-                </div>
             </div>
         </div>
     );

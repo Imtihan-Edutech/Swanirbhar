@@ -5,8 +5,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require('nodemailer');
 const { multerConfig } = require("../middleware/upload.middleware");
-const { auth } = require("../middleware/auth.middleware");
-const { access } = require("../middleware/access.middleware");
 const path = require("path");
 const validateFileSize = require("../middleware/validateFileSize.middleware");
 
@@ -14,6 +12,7 @@ const baseDir = path.join(__dirname, '../uploads/profileImages');
 const folders = { profilePic: 'profilePic', coverImage: 'coverImage' };
 const upload = multerConfig(baseDir, folders);
 
+// Get All Users details
 userRouter.get("/", async (req, res) => {
     try {
         const userDetails = await userModel.find()
@@ -46,7 +45,9 @@ userRouter.post("/sendVerificationOTP", async (req, res) => {
         const verificationOTP = Math.floor(100000 + Math.random() * 900000).toString();
 
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: "smtp.hostinger.com",
+            port: 587,
+            secure: false,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
@@ -54,7 +55,7 @@ userRouter.post("/sendVerificationOTP", async (req, res) => {
         });
 
         const mailOptions = {
-            from: process.env.EMAIL_USER,
+            from: `Swanirbhar <${process.env.EMAIL_USER}>`,
             to: email,
             subject: 'Swanirbhar Account Verification OTP',
             html: `
@@ -127,7 +128,7 @@ userRouter.post("/login", async (req, res) => {
     try {
         const user = await userModel.findOne({ email }).select('+password');
         if (!user) {
-            return res.status(400).json({ message: "Email does not exist, Please sign Up" });
+            return res.status(400).json({ message: "Email does not exist, Please Sign Up" });
         }
 
         const result = await bcrypt.compare(password, user.password);
@@ -140,6 +141,74 @@ userRouter.post("/login", async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: "Login Failed. Please try again later." });
+    }
+});
+
+userRouter.post("/create", async (req, res) => {
+    const { firstname, lastname, email, phoneNumber, password, role } = req.body;
+
+    try {
+        const userDetails = await userModel.findOne({ email });
+
+        if (userDetails) {
+            return res.status(400).json({ message: `User with this email already exists as ${userDetails.role}` });
+        }
+
+        bcrypt.hash(password, 10, async (err, hash) => {
+            if (err) {
+                return res.status(500).json({ message: `Error while hashing the password for ${role}` });
+            }
+
+            const newUser = new userModel({
+                firstname,
+                lastname,
+                email,
+                phoneNumber,
+                password: hash,
+                role,
+            });
+
+            await newUser.save();
+
+            const transporter = nodemailer.createTransport({
+                host: "smtp.hostinger.com",
+                port: 587,
+                secure: false,
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+
+            const mailOptions = {
+                from: process.env.EMAIL_USER,
+                to: email,
+                subject: 'Welcome to Our Platform!',
+                html: `
+                    <h1 style="color: #333;">Welcome to Our Platform, ${firstname} ${lastname}!</h1>
+                    <p>We are excited to have you on board as a <strong>${role}</strong>.</p>
+                    <h2>Your Details:</h2>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><strong>Name:</strong> ${firstname} ${lastname}</li>
+                        <li><strong>Email:</strong> ${email}</li>
+                        <li><strong>Phone Number:</strong> ${phoneNumber}</li>
+                        <li><strong>Role:</strong> ${role}</li>
+                    </ul>
+                    <p style="color: #555;">You can now log in to our platform and start exploring.</p>
+                    <p>Best Regards,<br>Your Company Team</p>
+                `,
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    return res.status(500).json({ message: `Registration successful but failed to send email for ${role}` });
+                } else {
+                    return res.status(200).json({ message: `Registration successful as ${role}. You can now login` });
+                }
+            });
+        });
+    } catch (error) {
+        return res.status(500).json({ message: `Registration Failed for ${role}, Please Try again later.` });
     }
 });
 
@@ -158,7 +227,9 @@ userRouter.put("/sendResetPasswordOTP", async (req, res) => {
         await existingUser.save();
 
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: "smtp.hostinger.com",
+            port: 587,
+            secure: false,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
@@ -278,58 +349,6 @@ userRouter.put("/updateDetails/:id", upload.fields([{ name: 'profilePic' }, { na
         res.status(500).json({ message: "Unable to update user details. Please Try again later." });
     }
 });
-
-
-// userRouter.put("/wishlist", auth, access("user"), async (req, res) => {
-//     const { courseId } = req.body;
-//     const userId = req.user._id;
-
-//     try {
-//         const course = await courseModel.findById(courseId);
-//         if (!course) {
-//             return res.status(404).json({ message: 'Course not found.' });
-//         }
-//         const user = await userModel.findById(userId);
-//         if (!user) {
-//             return res.status(404).json({ message: 'User not found.' });
-//         }
-//         if (user.wishlist.includes(courseId)) {
-//             return res.status(400).json({ message: 'Course already in wishlist' });
-//         }
-//         user.wishlist.push(courseId);
-//         await user.save();
-//         res.status(200).json({ message: 'Course Added to wishlist' });
-//     }
-//     catch (error) {
-//         res.status(500).json({ message: 'Failed to Add to Wishlist. Please try again later.' });
-//     }
-// })
-
-// userRouter.delete("/wishlist", auth, async (req, res) => {
-//     const userId = req.user._id;
-//     const { courseId } = req.body;
-
-//     try {
-//         const user = await userModel.findById(userId);
-//         if (!user) {
-//             return res.status(404).json({ message: 'User not found.' });
-//         }
-
-//         const index = user.wishlist.indexOf(courseId);
-//         if (index === -1) {
-//             return res.status(400).json({ message: 'Course not found in wishlist.' });
-//         }
-
-//         user.wishlist.splice(index, 1);
-//         await user.save();
-
-//         res.status(200).json({ message: 'Course removed from wishlist.' });
-//     } catch (error) {
-//         res.status(500).json({ message: 'Failed to remove course from wishlist. Please try again later.' });
-//     }
-// });
-
-
 
 module.exports = {
     userRouter

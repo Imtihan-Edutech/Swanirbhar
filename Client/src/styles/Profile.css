@@ -1,5 +1,5 @@
 .profile-page-container {
-    padding: 1% 0 2% 2%;
+    padding: 1%;
 }
 
 .banner {
@@ -14,7 +14,7 @@
 
 .about-container {
     position: absolute;
-    top: 52%;
+    top: 55%;
     left: 50%;
     transform: translateX(-50%);
     background-color: #fff;

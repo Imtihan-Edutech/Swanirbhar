@@ -95,6 +95,19 @@ const Articles = () => {
     setModalVisible(false);
   };
 
+  const handleShare = (article) => {
+    if (navigator.share) {
+      navigator.share({
+        title: article.title,
+        text: article.description,
+        url: window.location.href,
+      })
+      .catch((error) => message.error('Error sharing'));
+    } else {
+      message.warning('Share feature is not supported in this browser');
+    }
+  };
+
   return (
     <div className={`articles-container ${modalVisible ? 'modal-blur modal-blur-active' : ''}`}>
       <div className="articles-header">
@@ -163,6 +176,7 @@ const Articles = () => {
                       type="default"
                       icon={<ShareAltOutlined />}
                       className="share-button"
+                      onClick={() => handleShare(article)}
                     />
                   </div>
                 </div>

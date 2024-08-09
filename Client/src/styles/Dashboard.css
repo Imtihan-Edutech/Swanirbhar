@@ -14,7 +14,7 @@
   height: 65px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
   padding: 0 15px;
   transition: justify-content 0.5s;
 }
@@ -24,7 +24,12 @@
 }
 
 .logo-icon {
-  width: 35px;
+  width: 40px;
+ justify-content: center;
+}
+
+.logo-1-icon{
+  width: 60px;
 }
 
 .profile-container {
@@ -43,12 +48,13 @@
 }
 
 .profile-image {
-  width: 80px;
-  height: 80px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   object-fit: cover;
-  transition: width 0.5s, height 0.5s;
+  cursor: pointer;
 }
+
 
 .profile-container.collapsed .profile-image {
   width: 60px; 
@@ -114,8 +120,6 @@
 .custom-scrollbar::-webkit-scrollbar {
   width: 10px;
 }
-
-
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: #5c5c5c;

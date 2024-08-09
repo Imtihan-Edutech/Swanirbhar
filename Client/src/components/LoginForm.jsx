@@ -4,10 +4,6 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import "../styles/login-register.css";
 import loginImage from "../images/login.svg";
-import facebook from "../images/facebook.png";
-import google from "../images/google.png";
-import apple from "../images/apple.png";
-import logo from "../images/logo.webp";
 import { baseUrl } from '../App';
 
 const { Text } = Typography;
@@ -62,22 +58,6 @@ const LoginForm = () => {
                         <div className="account-link-container">
                             <Text className="account-link-text">Don't have an account?</Text>
                             <Link to="/register" className='form-link-btn'>Sign Up</Link>
-                        </div>
-
-                        <div className="divider">
-                            <span className="divider-text">Or login with</span>
-                        </div>
-
-                        <div className="social-icons">
-                            <div className="social-icon">
-                                <img src={facebook} alt="Facebook" />
-                            </div>
-                            <div className="social-icon">
-                                <img src={google} alt="Google" />
-                            </div>
-                            <div className="social-icon">
-                                <img src={apple} alt="Apple" />
-                            </div>
                         </div>
                     </Form>
                 </div>

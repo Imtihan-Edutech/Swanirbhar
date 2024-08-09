@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import logo from "../images/logo.webp";
-import otp from "../images/otp.png";
+import verifyCode from "../images/verifyCode.svg";
 import { Button, Form, Input, Typography, message } from 'antd';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -63,13 +62,11 @@ const VerifyCode = () => {
     return (
         <div className="body-container">
             <div className='form-container'>
-                <div className="product-logo">
-                    <img src={logo} alt="Logo" />
+                <div className="image-container">
+                    <img src={verifyCode} alt="Logo" />
                 </div>
 
-                <div className="form-content">
-                    <div className="form-image" style={{ backgroundImage: `url(${otp})` }}></div>
-                    <div className="form-data">
+                <div className="form-data">
                         <div className='back-to-login-container'>
                             <Link className='back-to-login' to="/login">
                                 <span className='arrow'>&lt;</span>
@@ -102,7 +99,6 @@ const VerifyCode = () => {
                             </div>
                         </Form>
                     </div>
-                </div>
             </div>
         </div>
     );

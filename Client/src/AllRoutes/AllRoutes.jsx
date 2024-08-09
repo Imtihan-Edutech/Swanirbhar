@@ -15,13 +15,13 @@ const AllRoutes = () => {
 
     return (
         <Routes>
-            <Route path="/" element={isUser ? <Navigate to="/dashboard/home" /> : <Landing />} />
+            <Route path="/" element={isUser ? <Navigate to="/dashboard" /> : <Landing />} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/verify-otp" element={<VerifyCode />} />
             <Route path="/reset-password" element={<SetPassword />} />
-            <Route path="/dashboard/*" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+            <Route path="/*" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         </Routes>
     );
 }

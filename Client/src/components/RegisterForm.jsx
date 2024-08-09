@@ -4,10 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import "../styles/login-register.css";
 import { baseUrl } from '../App';
-import facebook from "../images/facebook.png";
-import google from "../images/google.png";
-import apple from "../images/apple.png";
-import registerImage from "../images/login.svg";
+import registerImage from "../images/register.svg";
 
 const { Text } = Typography;
 
@@ -135,22 +132,6 @@ const RegisterForm = () => {
                     <div className="account-link-container">
                         <Text className="account-link-text">Already have an account?</Text>
                         <Link to="/login" className="form-link-btn">Login</Link>
-                    </div>
-
-                    <div className="divider">
-                        <span className="divider-text">Or Sign Up with</span>
-                    </div>
-
-                    <div className="social-icons">
-                        <div className="social-icon">
-                            <img src={facebook} alt="Facebook" />
-                        </div>
-                        <div className="social-icon">
-                            <img src={google} alt="Google" />
-                        </div>
-                        <div className="social-icon">
-                            <img src={apple} alt="Apple" />
-                        </div>
                     </div>
                 </div>
             </div>

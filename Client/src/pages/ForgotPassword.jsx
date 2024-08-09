@@ -2,11 +2,7 @@ import React, { useState } from 'react';
 import { Button, Form, Input, Typography, message } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import logo from '../images/logo.webp';
-import forgotPassword from '../images/forgot-Password.png';
-import facebook from '../images/facebook.png';
-import google from '../images/google.png';
-import apple from '../images/apple.png';
+import forgotPassword from '../images/forgot-Password.svg';
 import { baseUrl } from '../App';
 
 const { Text } = Typography;
@@ -33,12 +29,10 @@ const ForgotPassword = () => {
     return (
         <div className="body-container">
             <div className="form-container">
-                <div className="product-logo">
-                    <img src={logo} alt="Logo" />
+                <div className="image-container">
+                    <img src={forgotPassword} alt="Logo" />
                 </div>
-                <div className="form-content">
-                    <div className="form-image" style={{ backgroundImage: `url(${forgotPassword})` }}></div>
-                    <div className="form-data">
+                <div className="form-data">
                         <h2 className="form-heading">Forgot Your Password?</h2>
                         <p className="form-description">
                             Don’t worry, happens to all of us. Enter your email below to recover your password
@@ -61,27 +55,8 @@ const ForgotPassword = () => {
                                     Log In
                                 </Link>
                             </div>
-
-                            <div className="divider">
-                                <span className="divider-text">Or login with</span>
-                            </div>
-
-                            <div className="social-icons">
-                                <div className="social-icon">
-                                    <img src={facebook} alt="Facebook" />
-                                </div>
-                                <div className="social-icon">
-                                    <img src={google} alt="Google" />
-                                </div>
-                                <div className="social-icon">
-                                    <img src={apple} alt="Apple" />
-                                </div>
-                            </div>
                         </Form>
                     </div>
-
-
-                </div>
             </div>
         </div>
     );

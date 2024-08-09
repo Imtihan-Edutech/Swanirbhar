@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+    const mongoose = require("mongoose");
 const paginate = require("mongoose-paginate-v2");
 
 const courseSchema = mongoose.Schema({

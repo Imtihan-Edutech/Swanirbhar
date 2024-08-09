@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 const paginate = require('mongoose-paginate-v2');
 
 const userSchema = new mongoose.Schema({
-    googleId: { type: String },
     firstname: { type: String },
     lastname: { type: String },
     email: { type: String },
@@ -23,8 +22,8 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['super admin', 'admin', 'sub admin', 'business owner', 'entrepreneur', 'freelancer'],
-        default: 'freelancer'
+        enum: ['admin', 'staff', 'organization', 'entrepreneur', 'user', 'parent'],
+        default: 'user'
     },
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     verificationOTP: { type: String },
@@ -32,7 +31,6 @@ const userSchema = new mongoose.Schema({
 }, { versionKey: false, timestamps: true });
 
 userSchema.plugin(paginate);
-
 const userModel = mongoose.model("User", userSchema);
 
 module.exports = {

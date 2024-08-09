@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Input, Drawer, Form, Input as AntInput, TreeSelect, Upload, message, Spin, Empty } from 'antd';
 import "../styles/CaseStudy.css";
 import axios from 'axios';
-import { baseUrl } from '../App';
+import { axiosInstance, baseUrl } from '../App';
 import { categoryTreeData } from '../utils/ExtraUtils';
 import { BookOutlined, CommentOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { formatDistanceToNow } from 'date-fns';
@@ -32,10 +32,7 @@ const CaseStudy = () => {
     const getCaseStudies = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${baseUrl}/caseStudy`, {
-                headers: {
-                    'Authorization': token,
-                },
+            const response = await axiosInstance.get(`${baseUrl}/caseStudy`, {
                 params: {
                     title: searchTerm,
                     category: selectedCategory
@@ -65,7 +62,7 @@ const CaseStudy = () => {
                 caseStudyData.append('coverImage', coverImage[0].originFileObj);
             }
 
-            const response = await axios.post(`${baseUrl}/caseStudy`, caseStudyData, {
+            const response = await axiosInstance.post(`${baseUrl}/caseStudy`, caseStudyData, {
                 headers: {
                     'Authorization': token,
                     'Content-Type': 'multipart/form-data',
@@ -88,7 +85,7 @@ const CaseStudy = () => {
         setLoading(true);
         try {
             const { comment } = values;
-            await axios.post(`${baseUrl}/caseStudy/${selectedCaseStudy._id}/comments`, { comment }, {
+            await axiosInstance.post(`${baseUrl}/caseStudy/${selectedCaseStudy._id}/comments`, { comment }, {
                 headers: {
                     'Authorization': token,
                 },
@@ -156,7 +153,9 @@ const CaseStudy = () => {
                 {loading ? (
                     <Spin className="loading-spinner" />
                 ) : caseStudyData.length === 0 ? (
-                    <Empty className='empty-results-container' description="No Case Study Available" />
+                    <div className="empty-results">
+                    <Empty description="No Case Study Available" />
+                    </div>
                 ) : (
                     <div className="caseStudy-list">
                         {caseStudyData.map(caseStudy => (

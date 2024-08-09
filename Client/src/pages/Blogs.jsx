@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Drawer, Form, Input as AntInput, TreeSelect, Upload, message, Spin, Empty } from 'antd';
 import "../styles/Blogs.css";
-import axios from 'axios';
-import { baseUrl } from '../App';
+import { axiosInstance, baseUrl } from '../App';
 import { categoryTreeData } from '../utils/ExtraUtils';
-import { Link } from 'react-router-dom';
 import { BookOutlined, CommentOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -14,7 +12,6 @@ const Blogs = () => {
     const [form] = Form.useForm();
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(false);
-    const token = localStorage.getItem('token');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [blogData, setBlogData] = useState([]);
@@ -33,10 +30,7 @@ const Blogs = () => {
     const getBLogs = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${baseUrl}/blog`, {
-                headers: {
-                    'Authorization': token,
-                },
+            const response = await axiosInstance.get(`${baseUrl}/blog`, {
                 params: {
                     title: searchTerm,
                     category: selectedCategory
@@ -44,9 +38,7 @@ const Blogs = () => {
             });
             setBlogData(response.data.blogs);
         } catch (error) {
-            if (error.response && error.response.data) {
-                message.error(error.response.data.message);
-            }
+            message.error(error.response?.data?.message);
         }
         setLoading(false);
     };
@@ -65,9 +57,8 @@ const Blogs = () => {
                 blogData.append('coverImage', coverImage[0].originFileObj);
             }
 
-            const response = await axios.post(`${baseUrl}/blog`, blogData, {
+            const response = await axiosInstance.post(`${baseUrl}/blog`, blogData, {
                 headers: {
-                    'Authorization': token,
                     'Content-Type': 'multipart/form-data',
                 },
             });
@@ -77,9 +68,7 @@ const Blogs = () => {
             setVisible(false);
             form.resetFields();
         } catch (error) {
-            if (error.response && error.response.data) {
-                message.error(error.response.data.message);
-            }
+            message.error(error.response?.data?.message);
         }
         setLoading(false);
     };
@@ -88,11 +77,7 @@ const Blogs = () => {
         setLoading(true);
         try {
             const { comment } = values;
-            await axios.post(`${baseUrl}/blog/${selectedBlog._id}/comments`, { comment }, {
-                headers: {
-                    'Authorization': token,
-                },
-            });
+            await axiosInstance.post(`${baseUrl}/blog/${selectedBlog._id}/comments`, { comment });
             message.success('Comment added successfully');
             await getBLogs();
             setSelectedBlog(prevBlog => ({
@@ -105,9 +90,7 @@ const Blogs = () => {
             }));
             commentForm.resetFields();
         } catch (error) {
-            if (error.response && error.response.data) {
-                message.error(error.response.data.message);
-            }
+            message.error(error.response?.data?.message);
         }
         setLoading(false);
     };
@@ -126,6 +109,17 @@ const Blogs = () => {
     const closeDrawer = () => { setVisible(false); };
     const showCommentsDrawer = (blog) => { setSelectedBlog(blog); setCommentsVisible(true); };
     const closeCommentsDrawer = () => { setCommentsVisible(false); };
+
+    const handleShare = (blog) => {
+        if (navigator.share) {
+            navigator.share({
+                title: blog.title,
+                url: window.location.href
+            }).catch((error) => message.error('Error sharing'));
+        } else {
+            message.warning('Share feature not supported in this browser');
+        }
+    };
 
     return (
         <div className='blogs-container'>
@@ -147,7 +141,7 @@ const Blogs = () => {
                         onChange={(value) => setSelectedCategory(value)}
                     />
                     <Button type="primary" className="add-blog-button" onClick={showDrawer}>
-                         Add Blog
+                        Add Blog
                     </Button>
                 </div>
             </div>
@@ -156,7 +150,9 @@ const Blogs = () => {
                 {loading ? (
                     <Spin className="loading-spinner" />
                 ) : blogData.length === 0 ? (
-                    <Empty className='empty-results-container' description="No Blogs Available" />
+                    <div className="empty-results">
+                        <Empty description="No Blogs Available" />
+                    </div>
                 ) : (
                     <div className="blog-list">
                         {blogData.map(blog => (
@@ -183,6 +179,7 @@ const Blogs = () => {
                                             type="default"
                                             icon={<ShareAltOutlined />}
                                             className="share-button"
+                                            onClick={() => handleShare(blog)}
                                         />
                                     </div>
                                 </div>
@@ -242,7 +239,6 @@ const Blogs = () => {
                                     <p className="comment-user">{comment.user.firstname} {comment.user.lastname}</p>
                                     <p className="comment-date">{formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}</p>
                                     <p className="comment-text">{comment.comment}</p>
-
                                 </div>
                             ))}
                         </div>

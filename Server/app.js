@@ -9,6 +9,7 @@ const { articleRouter } = require("./routes/article.route");
 const { blogRouter } = require("./routes/blog.route");
 const { caseStudyRouter } = require("./routes/caseStudy.route");
 const { courseRouter } = require("./routes/course.route");
+// const wishlistRouter = require("./routes/wishlist.route");
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use("/course", courseRouter);
 app.use("/article", articleRouter);
 app.use("/blog", blogRouter);
 app.use("/caseStudy", caseStudyRouter)
+// app.use("/wishlist", wishlistRouter)
 app.use("/", aiRouter)
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
 
