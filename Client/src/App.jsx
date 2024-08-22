@@ -1,7 +1,7 @@
 import AllRoutes from './AllRoutes/AllRoutes';
 import './App.css'
 
-export const baseUrl = "http://localhost:3000";
+export const baseUrl = "http://13.233.44.111";
 
 // http://13.233.44.111;
 // http://localhost:3000
