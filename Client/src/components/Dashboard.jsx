@@ -52,6 +52,11 @@ import { baseUrl } from '../App';
 import axios from 'axios';
 import Notifications from '../pages/Notifications';
 import WorkInProgress from '../pages/WorkInProgress';
+import Admin from '../pages/Admin/Users/Admin';
+import Freelancer from '../pages/Admin/Users/Freelancer';
+import Organization from '../pages/Admin/Users/Organization';
+import Entrepreneur from '../pages/Admin/Users/Entrepreneur';
+import Staff from '../pages/Admin/Users/Staff';
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -62,7 +67,7 @@ const Dashboard = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const userId = localStorage.getItem("userId");
     const [user, setUser] = useState({});
-    const Navigate = useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchUserDetails();
@@ -78,9 +83,6 @@ const Dashboard = () => {
         }
     };
 
-    console.log(user.role);
-    
-
     const handleLogout = () => {
         Modal.confirm({
             title: 'Confirm Logout',
@@ -90,19 +92,19 @@ const Dashboard = () => {
             onOk: () => {
                 localStorage.removeItem('token');
                 localStorage.removeItem('userId');
-                setTimeout(()=>{
-                    Navigate('/')
-                },1000)
+                setTimeout(() => {
+                    navigate('/')
+                }, 1000)
             },
         });
     };
 
     const profileMenu = (
         <Menu>
-            <Menu.Item key="profile" onClick={() => Navigate('/profile')} icon={<UserOutlined />}>
+            <Menu.Item key="profile" onClick={() => navigate('/profile')} icon={<UserOutlined />}>
                 <span>Profile</span>
             </Menu.Item>
-            <Menu.Item key="logout" onClick={handleLogout} icon={<LogoutOutlined />} style={{color:"red"}}>
+            <Menu.Item key="logout" onClick={handleLogout} icon={<LogoutOutlined />} style={{ color: "red" }}>
                 <span>Logout</span>
             </Menu.Item>
         </Menu>
@@ -112,7 +114,7 @@ const Dashboard = () => {
         <Layout>
             <Sider
                 width={250}
-                className="sidebar"
+                className="sidebar custom-scrollbar"
                 trigger={null}
                 collapsible
                 collapsed={collapsed}
@@ -123,33 +125,116 @@ const Dashboard = () => {
                     {!collapsed && <img src={logo1} alt="Logo" className="logo-1-icon" />}
                 </div>
 
-                <Menu className='menu-items' selectedKeys={[location.pathname]}>
-
+                <Menu className='menu-items' selectedKeys={[location.pathname]} mode='inline'>
                     <Menu.Item key="/dashboard" icon={<CalendarOutlined />}>
                         <Link to="/dashboard" className="navbar-link">Dashboard</Link>
                     </Menu.Item>
-                    <Menu.Item key="/events" icon={<ScheduleOutlined />}>
-                        <Link to="/events" className="navbar-link">Events</Link>
-                    </Menu.Item>
 
-                    <Menu.Item key="/clients" icon={<TeamOutlined />}>
-                        <Link to="/clients" className="navbar-link">Clients</Link>
-                    </Menu.Item>
-
-                    <SubMenu key="assessment" icon={<PieChartOutlined />} title="Assessment">
-                        <Menu.Item key="/assessment/projects" icon={<FileTextOutlined />}>
-                            <Link to="/assessment/projects" className="navbar-link">Project</Link>
+                    {user.role === "super-admin" &&
+                        <Menu.Item key="/marketing-dashboard" icon={<CalendarOutlined />}>
+                            <Link to="/marketing-dashboard" className="navbar-link">Marketing Dashboard</Link>
                         </Menu.Item>
-                        <Menu.Item key="/assessment/quizzes" icon={<ReadOutlined />}>
-                            <Link to="/assessment/quizzes" className="navbar-link">Quizzes</Link>
-                        </Menu.Item>
-                    </SubMenu>
+                    }
 
-                    <Menu.Item key="/tasks" icon={<CalendarOutlined />}>
-                        <Link to="/tasks" className="navbar-link">Tasks</Link>
+                    <Menu.Item key="/mind-map" icon={<CalendarOutlined />}>
+                        <Link to="/mind-map" className="navbar-link">Mind Map</Link>
                     </Menu.Item>
 
-                    <SubMenu key="public-relation" icon={<BookOutlined />} title="Public Relation">
+
+                    <Menu.ItemGroup title='Client & Events Management'>
+                        {user.role !== "freelancer" &&
+                            <Menu.Item key="/clients" icon={<TeamOutlined />}>
+                                <Link to="/clients" className="navbar-link">Clients</Link>
+                            </Menu.Item>
+                        }
+
+                        <Menu.Item key="/events" icon={<ScheduleOutlined />}>
+                            <Link to="/events" className="navbar-link">Events</Link>
+                        </Menu.Item>
+                    </Menu.ItemGroup>
+
+                    <Menu.ItemGroup title="Tasks & Projects">
+                        <Menu.Item key="/tasks" icon={<CalendarOutlined />}>
+                            <Link to="/tasks" className="navbar-link">Tasks</Link>
+                        </Menu.Item>
+                        <Menu.Item key="/leads" icon={<TeamOutlined />}>
+                            <Link to="/leads" className="navbar-link">Leads</Link>
+                        </Menu.Item>
+                        <SubMenu key="assessment" icon={<PieChartOutlined />} title="Assessment">
+                            <Menu.Item key="/assessment/projects" icon={<FileTextOutlined />}>
+                                <Link to="/assessment/projects" className="navbar-link">Project</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/assessment/quizzes" icon={<ReadOutlined />}>
+                                <Link to="/assessment/quizzes" className="navbar-link">Quizzes</Link>
+                            </Menu.Item>
+                        </SubMenu>
+                    </Menu.ItemGroup>
+
+
+                    {user.role !== "freelancer" &&
+                        <Menu.ItemGroup title="Users">
+                            <SubMenu key="users" title="Users" icon={<ScheduleOutlined />}>
+                                <Menu.Item key='/users/admin' icon={<UnorderedListOutlined />} >
+                                    <Link to="/users/admin" className="navbar-link">Admin</Link>
+                                </Menu.Item>
+                                <Menu.Item key='/users/staff' icon={<UnorderedListOutlined />} >
+                                    <Link to="/users/staff" className="navbar-link">Staff</Link>
+                                </Menu.Item>
+                                <Menu.Item key='/users/organization' icon={<UnorderedListOutlined />} >
+                                    <Link to="/users/organization" className="navbar-link">Organization</Link>
+                                </Menu.Item>
+                                <Menu.Item key='/users/entrepreneur' icon={<UnorderedListOutlined />} >
+                                    <Link to="/users/entrepreneur" className="navbar-link">Entrepreneur</Link>
+                                </Menu.Item>
+                                <Menu.Item key='/users/freelancer' icon={<UnorderedListOutlined />} >
+                                    <Link to="/users/freelancer" className="navbar-link">Freelancer</Link>
+                                </Menu.Item>
+                            </SubMenu>
+                        </Menu.ItemGroup>
+                    }
+
+                    <Menu.ItemGroup title="Sales & Finance">
+                        <SubMenu key="sales" title="Sales" icon={<ShoppingOutlined />}>
+                            <Menu.Item key="/sales/orderlist" icon={<UnorderedListOutlined />}>
+                                <Link to="/sales/orderlist" className="navbar-link">Order List</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/sales/invoice" icon={<FileTextOutlined />}>
+                                <Link to="/sales/invoice" className="navbar-link">Invoice</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/sales/contract" icon={<FileDoneOutlined />}>
+                                <Link to="/sales/contract" className="navbar-link">Contract</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/sales/payment" icon={<CreditCardOutlined />}>
+                                <Link to="/sales/payment" className="navbar-link">Payment</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/sales/credit-notes" icon={<BankOutlined />}>
+                                <Link to="/sales/credit-notes" className="navbar-link">Credit Notes</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/sales/proposal" icon={<FileAddOutlined />}>
+                                <Link to="/sales/proposal" className="navbar-link">Proposal</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/sales/estimation" icon={<CalculatorOutlined />}>
+                                <Link to="/sales/estimation" className="navbar-link">Estimation</Link>
+                            </Menu.Item>
+                        </SubMenu>
+
+                        <SubMenu key="finance" title="Finance" icon={<BarChartOutlined />}>
+                            <Menu.Item key="/finance/payout" icon={<WalletOutlined />}>
+                                <Link to="/finance/payout" className="navbar-link">Payout</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/finance/change-account" icon={<SwapOutlined />}>
+                                <Link to="/finance/change-account" className="navbar-link">Change Account</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/finance/subscription" icon={<CalendarOutlined />}>
+                                <Link to="/finance/subscription" className="navbar-link">Subscription</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/finance/installments" icon={<PieChartOutlined />}>
+                                <Link to="/finance/installments" className="navbar-link">Installments</Link>
+                            </Menu.Item>
+                        </SubMenu>
+                    </Menu.ItemGroup>
+
+                    <Menu.ItemGroup title="Public Relations">
                         <Menu.Item key="/public-relation/articles" icon={<FileTextOutlined />}>
                             <Link to="/public-relation/articles" className="navbar-link">Articles</Link>
                         </Menu.Item>
@@ -159,76 +244,37 @@ const Dashboard = () => {
                         <Menu.Item key="/public-relation/case-studies" icon={<FileSearchOutlined />}>
                             <Link to="/public-relation/case-studies" className="navbar-link">Case Studies</Link>
                         </Menu.Item>
-                    </SubMenu>
+                    </Menu.ItemGroup>
 
-                    <Menu.Item key="/leads" icon={<TeamOutlined />}>
-                        <Link to="/leads" className="navbar-link">Leads</Link>
-                    </Menu.Item>
+                    <Menu.ItemGroup title="Marketing">
+                        <SubMenu key="marketing" title="Marketing" icon={<TagOutlined />}>
+                            <Menu.Item key="/marketing/discount" icon={<PercentageOutlined />}>
+                                <Link to="/marketing/discount" className="navbar-link">Discount</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/marketing/promotion" icon={<RocketOutlined />}>
+                                <Link to="/marketing/promotion" className="navbar-link">Promotion</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/marketing/coupons" icon={<CreditCardOutlined />}>
+                                <Link to="/marketing/coupons" className="navbar-link">Coupons</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/marketing/affilation" icon={<UserAddOutlined />}>
+                                <Link to="/marketing/affilation" className="navbar-link">Affiliation</Link>
+                            </Menu.Item>
+                            <Menu.Item key="/marketing/registration-bonus" icon={<GiftOutlined />}>
+                                <Link to="/marketing/registration-bonus" className="navbar-link">Registration Bonus</Link>
+                            </Menu.Item>
+                        </SubMenu>
+                    </Menu.ItemGroup>
 
-                    <SubMenu key="sales" title="Sales" icon={<ShoppingOutlined />}>
-                        <Menu.Item key="/sales/invoice" icon={<FileTextOutlined />}>
-                            <Link to="/sales/invoice" className="navbar-link">Invoice</Link>
+                    <Menu.ItemGroup title="Support & Tickets">
+                        <Menu.Item key="/support" icon={<TagOutlined />}>
+                            <Link to="/support" className="navbar-link">Support</Link>
                         </Menu.Item>
-                        <Menu.Item key="/sales/orderlist" icon={<UnorderedListOutlined />}>
-                            <Link to="/sales/orderlist" className="navbar-link">Order List</Link>
-                        </Menu.Item>
-                        <Menu.Item key="/sales/payment" icon={<CreditCardOutlined />}>
-                            <Link to="/sales/payment" className="navbar-link">Payment</Link>
-                        </Menu.Item>
-                        <Menu.Item key="/sales/contract" icon={<FileDoneOutlined />}>
-                            <Link to="/sales/contract" className="navbar-link">Contract</Link>
-                        </Menu.Item>
-                        <Menu.Item key="/sales/proposal" icon={<FileAddOutlined />}>
-                            <Link to="/sales/proposal" className="navbar-link">Proposal</Link>
-                        </Menu.Item>
-                        <Menu.Item key="/sales/estimation" icon={<CalculatorOutlined />}>
-                            <Link to="/sales/estimation" className="navbar-link">Estimation</Link>
-                        </Menu.Item>
-                        <Menu.Item key="/sales/credit-notes" icon={<BankOutlined />}>
-                            <Link to="/sales/credit-notes" className="navbar-link">Credit Notes</Link>
-                        </Menu.Item>
-                    </SubMenu>
 
-                    <SubMenu key="finance" title="Finance" icon={<BarChartOutlined />}>
-                        <Menu.Item key="/finance/payout" icon={<WalletOutlined />}>
-                            <Link to="/finance/payout" className="navbar-link">Payout</Link>
+                        <Menu.Item key="/ticket" icon={<TagOutlined />}>
+                            <Link to="/ticket" className="navbar-link">Ticket</Link>
                         </Menu.Item>
-                        <Menu.Item key="/finance/change-account" icon={<SwapOutlined />}>
-                            <Link to="/finance/change-account" className="navbar-link">Change Account</Link>
-                        </Menu.Item>
-                        <Menu.Item key="/finance/subscription" icon={<CalendarOutlined />}>
-                            <Link to="/finance/subscription" className="navbar-link">Subscription</Link>
-                        </Menu.Item>
-                        <Menu.Item key="/finance/installments" icon={<PieChartOutlined />}>
-                            <Link to="/finance/installments" className="navbar-link">Installments</Link>
-                        </Menu.Item>
-                    </SubMenu>
-
-                    <Menu.Item key="/support" icon={<TagOutlined />}>
-                        <Link to="/support" className="navbar-link">Support</Link>
-                    </Menu.Item>
-
-                    <Menu.Item key="/ticket" icon={<TagOutlined />}>
-                        <Link to="/ticket" className="navbar-link">Ticket</Link>
-                    </Menu.Item>
-
-                    <SubMenu key="marketing" title="Marketing" icon={<TagOutlined />}>
-                        <Menu.Item key="/marketing/discount" icon={<PercentageOutlined />}>
-                            <Link to="/marketing/discount" className="navbar-link">Discount</Link>
-                        </Menu.Item>
-                        <Menu.Item key="/marketing/promotion" icon={<RocketOutlined />}>
-                            <Link to="/marketing/promotion" className="navbar-link">Promotion</Link>
-                        </Menu.Item>
-                        <Menu.Item key="/marketing/affilation" icon={<UserAddOutlined />}>
-                            <Link to="/marketing/affilation" className="navbar-link">Affiliation</Link>
-                        </Menu.Item>
-                        <Menu.Item key="/marketing/registration-bonus" icon={<GiftOutlined />}>
-                            <Link to="/marketing/registration-bonus" className="navbar-link">Registration Bonus</Link>
-                        </Menu.Item>
-                        <Menu.Item key="/marketing/coupons" icon={<CreditCardOutlined />}>
-                            <Link to="/marketing/coupons" className="navbar-link">Coupons</Link>
-                        </Menu.Item>
-                    </SubMenu>
+                    </Menu.ItemGroup>
                 </Menu>
             </Sider>
 
@@ -248,11 +294,6 @@ const Dashboard = () => {
                                 <RobotOutlined />
                             </Link>
                         </Tooltip>
-                        <Tooltip placement='bottom' title="Creators Near Me">
-                            <Link to="/creators-near-me" className="header-link">
-                                <UsergroupAddOutlined />
-                            </Link>
-                        </Tooltip>
                         <Tooltip placement='bottom' title="Forum">
                             <Link to="/forum" className="header-link">
                                 <MessageOutlined />
@@ -263,6 +304,13 @@ const Dashboard = () => {
                                 <MailOutlined />
                             </Link>
                         </Tooltip>
+                        <Tooltip placement='bottom' title="Creators Near Me">
+                            <Link to="/creators-near-me" className="header-link">
+                                <UsergroupAddOutlined />
+                            </Link>
+                        </Tooltip>
+
+
                         <Tooltip placement='bottom' title="Courses">
                             <Link to="/courses" className="header-link">
                                 <BookOutlined />
@@ -326,6 +374,11 @@ const Dashboard = () => {
                         <Route path="courses" element={<PrivateRoute><Course /></PrivateRoute>} />
                         <Route path="shop" element={<PrivateRoute><div>Shop</div></PrivateRoute>} />
                         <Route path="profile/*" element={<PrivateRoute><Profile /></PrivateRoute>} />
+                        <Route path="users/admin" element={<PrivateRoute><Admin /></PrivateRoute>} />
+                        <Route path="users/staff" element={<PrivateRoute><Staff /></PrivateRoute>} />
+                        <Route path="users/organization" element={<PrivateRoute><Organization /></PrivateRoute>} />
+                        <Route path="users/entrepreneur" element={<PrivateRoute><Entrepreneur /></PrivateRoute>} />
+                        <Route path="users/freelancer" element={<PrivateRoute><Freelancer /></PrivateRoute>} />
                     </Routes>
                 </Content>
             </Layout>

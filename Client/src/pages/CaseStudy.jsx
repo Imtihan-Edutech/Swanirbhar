@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Input, Drawer, Form, Input as AntInput, TreeSelect, Upload, message, Spin, Empty } from 'antd';
 import "../styles/CaseStudy.css";
 import axios from 'axios';
-import { axiosInstance, baseUrl } from '../App';
+import { baseUrl } from '../App';
 import { categoryTreeData } from '../utils/ExtraUtils';
 import { BookOutlined, CommentOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { formatDistanceToNow } from 'date-fns';
@@ -13,7 +13,6 @@ const CaseStudy = () => {
     const [form] = Form.useForm();
     const [visible, setVisible] = useState(false);
     const [loading, setLoading] = useState(false);
-    const token = localStorage.getItem('token');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [caseStudyData, setcaseStudyData] = useState([]);
@@ -32,7 +31,10 @@ const CaseStudy = () => {
     const getCaseStudies = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`${baseUrl}/caseStudy`, {
+            const response = await axios.get(`${baseUrl}/caseStudy`, {
+                headers: {
+                    'Authorization': localStorage.getItem("token")
+                },
                 params: {
                     title: searchTerm,
                     category: selectedCategory
@@ -62,9 +64,9 @@ const CaseStudy = () => {
                 caseStudyData.append('coverImage', coverImage[0].originFileObj);
             }
 
-            const response = await axiosInstance.post(`${baseUrl}/caseStudy`, caseStudyData, {
+            const response = await axios.post(`${baseUrl}/caseStudy`, caseStudyData, {
                 headers: {
-                    'Authorization': token,
+                    'Authorization': localStorage.getItem("token"),
                     'Content-Type': 'multipart/form-data',
                 },
             });
@@ -85,9 +87,9 @@ const CaseStudy = () => {
         setLoading(true);
         try {
             const { comment } = values;
-            await axiosInstance.post(`${baseUrl}/caseStudy/${selectedCaseStudy._id}/comments`, { comment }, {
+            await axios.post(`${baseUrl}/caseStudy/${selectedCaseStudy._id}/comments`, { comment }, {
                 headers: {
-                    'Authorization': token,
+                    'Authorization': localStorage.getItem("token")
                 },
             });
             message.success('Comment added successfully');
@@ -144,7 +146,7 @@ const CaseStudy = () => {
                         onChange={(value) => setSelectedCategory(value)}
                     />
                     <Button type="primary" className="add-caseStudy-button" onClick={showDrawer}>
-                       Add Case Study
+                        Add Case Study
                     </Button>
                 </div>
             </div>
@@ -154,7 +156,7 @@ const CaseStudy = () => {
                     <Spin className="loading-spinner" />
                 ) : caseStudyData.length === 0 ? (
                     <div className="empty-results">
-                    <Empty description="No Case Study Available" />
+                        <Empty description="No Case Study Available" />
                     </div>
                 ) : (
                     <div className="caseStudy-list">

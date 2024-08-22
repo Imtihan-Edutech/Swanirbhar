@@ -6,7 +6,7 @@ import {
 import { Link, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Profile.css';
-import { axiosInstance, baseUrl } from '../App';
+import {  baseUrl } from '../App';
 import PrivateRoute from '../AllRoutes/PrivateRoutes';
 import facebook from '../images/facebook-1.png'
 import linkedin from '../images/linkedin.png'
@@ -16,12 +16,13 @@ import youtube from '../images/youtube.png'
 
 const Profile = () => {
     const [user, setUser] = useState({});
-    const [courseCount , setCourseCount] = useState([]);
+    const [courseCount, setCourseCount] = useState([]);
     const [loading, setLoading] = useState(false);
     const [drawerVisible, setDrawerVisible] = useState(false);
     const [form] = Form.useForm();
     const userId = localStorage.getItem("userId");
     const location = useLocation();
+    const token  = localStorage.getItem("token")
 
     useEffect(() => {
         fetchUserDetails();
@@ -31,10 +32,12 @@ const Profile = () => {
     const fetchCourseDetails = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`${baseUrl}/course/myEnrolledCourses`);
+            const response = await axios.get(`${baseUrl}/course/myEnrolledCourses`, {
+                headers: {
+                    'Authorization': localStorage.getItem("token")
+                },
+            });
             setCourseCount(response.data.totalData);
-            console.log(response.data.totalData);
-            
         }
         catch (error) {
             if (error.response && error.response.data) {
@@ -49,7 +52,7 @@ const Profile = () => {
         try {
             const response = await axios.get(`${baseUrl}/user/${userId}`);
             setUser(response.data);
-        } 
+        }
         catch (error) {
             if (error.response && error.response.data) {
                 message.error(error.response.data.message);
@@ -60,8 +63,7 @@ const Profile = () => {
 
     const showDrawer = () => {
         form.setFieldsValue({
-            firstname: user.firstname,
-            lastname: user.lastname,
+            fullName: user.fullName,
             email: user.email,
             phoneNumber: user.phoneNumber,
             designation: user.designation,
@@ -78,13 +80,11 @@ const Profile = () => {
     };
 
     const onFinish = async (formData) => {
-        console.log(formData);
         try {
-            const { firstname, lastname, phoneNumber, designation, educations, skills, experience, facebook, linkedin, github, twitter, youtube, profilePic, coverImage } = formData;
+            const { fullName, phoneNumber, designation, educations, skills, experience, facebook, linkedin, github, twitter, youtube, profilePic, coverImage } = formData;
 
             const updatedData = new FormData();
-            updatedData.append('firstname', firstname);
-            updatedData.append('lastname', lastname);
+            updatedData.append('fullName', fullName);
             updatedData.append('phoneNumber', phoneNumber);
             updatedData.append('designation', designation);
             updatedData.append('educations', JSON.stringify(educations));
@@ -113,7 +113,7 @@ const Profile = () => {
             }
         }
     };
- 
+
     const onClose = () => { setDrawerVisible(false); };
 
     return (
@@ -127,7 +127,7 @@ const Profile = () => {
                                     <img src={user.profilePic ? `${baseUrl}/uploads/profileImages/profilePic/${user.profilePic}` : 'https://via.placeholder.com/130'} alt="Profile Pic" />
                                 </div>
                                 <div className="info-items">
-                                    <h2>{user.firstname} {user.lastname}</h2>
+                                    <h2>{user.fullName}</h2>
                                     <div className="stats-container">
                                         <div className="stats-item">
                                             <span className="stats-count">{courseCount}</span>
@@ -220,35 +220,33 @@ const Profile = () => {
             >
                 <Form form={form} onFinish={onFinish} layout="vertical">
                     <div style={{ display: "flex", gap: "10px" }}>
-                    <Form.Item name="profilePic" valuePropName='fileList' getValueFromEvent={e => e.fileList} style={{flex:"1"}}>
-                        <Upload name='profilePic' listType='picture' beforeUpload={() => false} maxCount={1}>
-                            <Button icon={<EditOutlined />}>Upload Profile Photo</Button>
-                        </Upload>
-                    </Form.Item>
-                    <Form.Item name="coverImage" valuePropName='fileList' getValueFromEvent={e => e.fileList} style={{flex:"1"}}>
-                        <Upload name='coverImage' listType='picture' beforeUpload={() => false} maxCount={1}>
-                            <Button icon={<EditOutlined />}>Upload Cover Image</Button>
-                        </Upload>
-                    </Form.Item>
-                    </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                        <Form.Item name="firstname" rules={[{ required: true, message: 'Please enter your first name' }]} style={{flex:"1"}}>
-                            <Input placeholder='Enter FirstName' />
+                        <Form.Item name="profilePic" valuePropName='fileList' getValueFromEvent={e => e.fileList} style={{ flex: "1" }}>
+                            <Upload name='profilePic' listType='picture' beforeUpload={() => false} maxCount={1}>
+                                <Button icon={<EditOutlined />}>Upload Profile Photo</Button>
+                            </Upload>
                         </Form.Item>
-                        <Form.Item name="lastname" rules={[{ required: true, message: 'Please enter your last name' }]} style={{flex:"1"}}>
-                            <Input placeholder='Enter LastName' />
+                        <Form.Item name="coverImage" valuePropName='fileList' getValueFromEvent={e => e.fileList} style={{ flex: "1" }}>
+                            <Upload name='coverImage' listType='picture' beforeUpload={() => false} maxCount={1}>
+                                <Button icon={<EditOutlined />}>Upload Cover Image</Button>
+                            </Upload>
                         </Form.Item>
                     </div>
+                    
+                        <Form.Item name="fullName" rules={[{ required: true, message: 'Please enter your first name' }]} style={{ flex: "1" }}>
+                            <Input placeholder='Enter FullName' />
+                        </Form.Item>
+                        
+                  
                     <Form.Item name="email">
                         <Input placeholder='Enter Email' disabled />
                     </Form.Item>
                     <div style={{ display: "flex", gap: "10px" }}>
-                    <Form.Item name="phoneNumber" rules={[{ required: true, message: 'Please enter your phone number' }]} style={{flex:"1"}}>
-                        <Input placeholder='Enter PhoneNumber' />
-                    </Form.Item>
-                    <Form.Item name="designation" style={{flex:"1"}}>
-                        <Input placeholder='Enter Designation' />
-                    </Form.Item>
+                        <Form.Item name="phoneNumber" rules={[{ required: true, message: 'Please enter your phone number' }]} style={{ flex: "1" }}>
+                            <Input placeholder='Enter PhoneNumber' />
+                        </Form.Item>
+                        <Form.Item name="designation" style={{ flex: "1" }}>
+                            <Input placeholder='Enter Designation' />
+                        </Form.Item>
                     </div>
                     <Form.List name="educations">
                         {(fields, { add, remove }) => (
@@ -352,23 +350,23 @@ const Profile = () => {
                             </>
                         )}
                     </Form.List>
-                    <Form.Item name="facebook" label="Facebook :" style={{fontWeight:"600"}}>
+                    <Form.Item name="facebook" label="Facebook :" style={{ fontWeight: "600" }}>
                         <Input placeholder='Facebook Link' />
                     </Form.Item>
-                    <Form.Item name="linkedin" label="LinkedIn :" style={{fontWeight:"600"}}>
+                    <Form.Item name="linkedin" label="LinkedIn :" style={{ fontWeight: "600" }}>
                         <Input placeholder='LinkedIn Link' />
                     </Form.Item>
-                    <Form.Item name="github" label="Github :" style={{fontWeight:"600"}}>
+                    <Form.Item name="github" label="Github :" style={{ fontWeight: "600" }}>
                         <Input placeholder='GitHub Link' />
                     </Form.Item>
-                    <Form.Item name="twitter" label="Twitter :" style={{fontWeight:"600"}}>
+                    <Form.Item name="twitter" label="Twitter :" style={{ fontWeight: "600" }}>
                         <Input placeholder='Twitter Link' />
                     </Form.Item>
-                    <Form.Item name="youtube" label="Youtube :" style={{fontWeight:"600"}}>
+                    <Form.Item name="youtube" label="Youtube :" style={{ fontWeight: "600" }}>
                         <Input placeholder='YouTube Link' />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" style={{width:"100%"}} loading={loading} htmlType="submit">Save Changes</Button>
+                        <Button type="primary" style={{ width: "100%" }} loading={loading} htmlType="submit">Save Changes</Button>
                     </Form.Item>
                 </Form>
             </Drawer>

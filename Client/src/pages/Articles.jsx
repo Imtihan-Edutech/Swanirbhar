@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Drawer, Form, Input as AntInput, TreeSelect, Upload, message, Spin, Empty, Modal } from 'antd';
 import '../styles/Articles.css';
-import { axiosInstance, baseUrl } from '../App';
+import {  baseUrl } from '../App';
 import { categoryTreeData } from '../utils/ExtraUtils';
 import { formatDistanceToNow } from 'date-fns';
 import { BookOutlined, ShareAltOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const { TextArea } = AntInput;
 
@@ -29,7 +30,10 @@ const Articles = () => {
   const getArticles = async () => {
     setLoading(true);
     try {
-      const response = await axiosInstance.get(`${baseUrl}/article`, {
+      const response = await axios.get(`${baseUrl}/article`, {
+        headers:{
+          Authorization: localStorage.getItem('token')
+        },
         params: {
           title: searchTerm,
           category: selectedCategory
@@ -57,9 +61,10 @@ const Articles = () => {
         articleData.append('coverImage', coverImage[0].originFileObj);
       }
 
-      const response = await axiosInstance.post(`${baseUrl}/article`, articleData, {
+      const response = await axios.post(`${baseUrl}/article`, articleData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          Authorization: localStorage.getItem('token')
         },
       });
 

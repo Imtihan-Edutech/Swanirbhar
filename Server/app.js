@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
     res.json("Welcome To Swanirbhar");
 })
 
-app.listen(process.env.PORT || 3000, async () => {
+app.listen(process.env.PORT, async () => {
     try {
         await connection;
         console.log("DB Connected Successfully");

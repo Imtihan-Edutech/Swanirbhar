@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input, Drawer, Form, Input as AntInput, TreeSelect, Upload, message, Spin, Empty } from 'antd';
 import "../styles/Blogs.css";
-import { axiosInstance, baseUrl } from '../App';
+import { baseUrl } from '../App';
 import { categoryTreeData } from '../utils/ExtraUtils';
 import { BookOutlined, CommentOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { formatDistanceToNow } from 'date-fns';
+import axios from 'axios';
 
 const { TextArea } = AntInput;
 
@@ -30,12 +31,17 @@ const Blogs = () => {
     const getBLogs = async () => {
         setLoading(true);
         try {
-            const response = await axiosInstance.get(`${baseUrl}/blog`, {
+            const response = await axios.get(`${baseUrl}/blog`, {
+                headers: {
+                    'Authorization': localStorage.getItem("token")
+                },
                 params: {
                     title: searchTerm,
                     category: selectedCategory
                 }
             });
+            console.log(response.data);
+            
             setBlogData(response.data.blogs);
         } catch (error) {
             message.error(error.response?.data?.message);
@@ -57,9 +63,10 @@ const Blogs = () => {
                 blogData.append('coverImage', coverImage[0].originFileObj);
             }
 
-            const response = await axiosInstance.post(`${baseUrl}/blog`, blogData, {
+            const response = await axios.post(`${baseUrl}/blog`, blogData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
+                    'Authorization': localStorage.getItem("token")
                 },
             });
 
@@ -77,7 +84,11 @@ const Blogs = () => {
         setLoading(true);
         try {
             const { comment } = values;
-            await axiosInstance.post(`${baseUrl}/blog/${selectedBlog._id}/comments`, { comment });
+            await axios.post(`${baseUrl}/blog/${selectedBlog._id}/comments`, { comment },{
+                headers: {
+                    'Authorization': localStorage.getItem("token")
+                  },
+            });
             message.success('Comment added successfully');
             await getBLogs();
             setSelectedBlog(prevBlog => ({
