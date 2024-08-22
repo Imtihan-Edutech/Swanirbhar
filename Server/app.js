@@ -25,7 +25,7 @@ app.use("/", aiRouter)
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
 
 app.get('/', (req, res) => {
-    res.json("Welcome To Swanirbhar");
+    res.json("Welcome To Swanirbhar.in");
 })
 
 app.listen(process.env.PORT, async () => {
