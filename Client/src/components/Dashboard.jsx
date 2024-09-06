@@ -46,7 +46,6 @@ import '../styles/Dashboard.css';
 import Course from '../pages/Course';
 import Profile from '../pages/Profile';
 import Articles from '../pages/Articles';
-import Blogs from '../pages/Blogs';
 import CaseStudy from '../pages/CaseStudy';
 import { baseUrl } from '../App';
 import axios from 'axios';
@@ -57,6 +56,7 @@ import Freelancer from '../pages/Admin/Users/Freelancer';
 import Organization from '../pages/Admin/Users/Organization';
 import Entrepreneur from '../pages/Admin/Users/Entrepreneur';
 import Staff from '../pages/Admin/Users/Staff';
+import Blogs from '../pages/Blogs';
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;

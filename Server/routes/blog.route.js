@@ -12,7 +12,7 @@ const baseDir = path.join(__dirname, '../uploads');
 const upload = multer({ storage: diskStorage(baseDir, { coverImage: 'blogImages' }) });
 
 
-blogRouter.get("/", auth, async (req, res) => {
+blogRouter.get("/", async (req, res) => {
     try {
         const { title, category, createdBy } = req.query;
         const query = {};
@@ -26,20 +26,18 @@ blogRouter.get("/", auth, async (req, res) => {
         }
 
         if (createdBy) {
-            const users = await userModel.find({
-                $or: [
-                    { firstname: { $regex: createdBy, $options: 'i' } },
-                    { lastname: { $regex: createdBy, $options: 'i' } }
-                ]
-            });
+            const users = await userModel.find(
+                {
+                    fullName: { $regex: createdBy, $options: 'i' }
+                });
             const userIds = users.map(user => user._id);
             query.createdBy = { $in: userIds };
         }
 
         const options = {
             populate: [
-                { path: 'createdBy', select: 'firstname lastname profilePic' },
-                { path: 'comments.user', select: 'firstname lastname profilePic' }
+                { path: 'createdBy', select: 'fullName profilePic' },
+                { path: 'comments.user', select: 'fullName profilePic' }
             ],
         };
 
@@ -55,6 +53,31 @@ blogRouter.get("/", auth, async (req, res) => {
         res.status(500).json({ message: "Error getting Blogs" });
     }
 })
+
+blogRouter.get("/:id", async (req, res) => {
+    try {
+        const blogId = req.params.id;
+        const blog = await blogModel
+            .findById(blogId)
+            .populate({
+                path: 'createdBy',
+                select: 'fullName profilePic'
+            })
+            .populate({
+                path: 'comments.user',
+                select: 'fullName profilePic'
+            });
+
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+
+        res.status(200).json(blog);
+    } catch (error) {
+        res.status(500).json({ message: "Error getting blog" });
+    }
+});
+
 
 blogRouter.post("/", auth, upload.single("coverImage"), async (req, res) => {
     const { title, category, content } = req.body;
@@ -88,7 +111,7 @@ blogRouter.delete("/:id", auth, async (req, res) => {
             return res.status(404).json({ message: "Blog not found or you are not authorized to delete this blog" });
         }
         await blogModel.deleteOne({ _id: blogId });
-        
+
         res.status(200).json({ message: "Blog deleted successfully" });
 
     } catch (error) {
@@ -96,12 +119,11 @@ blogRouter.delete("/:id", auth, async (req, res) => {
     }
 })
 
-blogRouter.post("/:id/comments", auth, async (req, res) => {
+blogRouter.post("/:id/comments", async (req, res) => {
     const blogId = req.params.id;
     const { comment } = req.body;
 
     try {
-
         const blog = await blogModel.findById(blogId);
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" });
@@ -119,7 +141,9 @@ blogRouter.post("/:id/comments", auth, async (req, res) => {
         res.status(200).json({ message: "Comment added successfully" });
 
     } catch (error) {
-        res.status(500).json({ message: "Error adding comment"});
+        console.log(error);
+
+        res.status(500).json({ message: "Error adding comment" });
     }
 });
 

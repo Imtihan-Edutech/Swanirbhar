@@ -11,7 +11,7 @@ const articleRouter = express.Router();
 const baseDir = path.join(__dirname, '../uploads');
 const upload = multer({ storage: diskStorage(baseDir, { coverImage: 'articleImages' }) });
 
-articleRouter.get("/", auth, async (req, res) => {
+articleRouter.get("/", async (req, res) => {
     try {
         const { title, category, createdBy } = req.query;
         const query = {};
@@ -25,18 +25,15 @@ articleRouter.get("/", auth, async (req, res) => {
         }
 
         if (createdBy) {
-            const users = await userModel.find({
-                $or: [
-                    { firstname: { $regex: createdBy, $options: 'i' } },
-                    { lastname: { $regex: createdBy, $options: 'i' } }
-                ]
-            });
+            const users = await userModel.find(
+                { fullName: { $regex: createdBy, $options: 'i' } },
+            );
             const userIds = users.map(user => user._id);
             query.createdBy = { $in: userIds };
         }
 
         const options = {
-            populate: [{ path: 'createdBy', select: 'firstname lastname profilePic' }],
+            populate: [{ path: 'createdBy', select: 'fullName profilePic' }],
         };
 
         const articles = await articleModel.paginate(query, options);

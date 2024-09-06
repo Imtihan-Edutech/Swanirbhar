@@ -11,7 +11,7 @@ const baseDir = path.join(__dirname, '../uploads');
 const upload = multer({ storage: diskStorage(baseDir, { coverImage: 'caseStudyImages' }) });
 
 
-caseStudyRouter.get("/", auth, async (req, res) => {
+caseStudyRouter.get("/", async (req, res) => {
     try {
         const { title, category, createdBy } = req.query;
         const query = {};
@@ -25,11 +25,8 @@ caseStudyRouter.get("/", auth, async (req, res) => {
         }
 
         if (createdBy) {
-            const users = await userModel.find({
-                $or: [
-                    { firstname: { $regex: createdBy, $options: 'i' } },
-                    { lastname: { $regex: createdBy, $options: 'i' } }
-                ]
+            const users = await userModel.find(
+                { firstname: { $regex: createdBy, $options: 'i' } 
             });
             const userIds = users.map(user => user._id);
             query.createdBy = { $in: userIds };
@@ -37,8 +34,8 @@ caseStudyRouter.get("/", auth, async (req, res) => {
 
         const options = {
             populate: [
-                { path: 'createdBy', select: 'firstname lastname profilePic' },
-                { path: 'comments.user', select: 'firstname lastname profilePic' }
+                { path: 'createdBy', select: 'fullName profilePic' },
+                { path: 'comments.user', select: 'fullName profilePic' }
             ],
         };
 
@@ -88,7 +85,7 @@ caseStudyRouter.delete("/:id", auth, async (req, res) => {
             return res.status(404).json({ message: "Case Study not found or you are not authorized to delete this Case Study" });
         }
         await caseStudyModel.deleteOne({ _id: caseStudyId });
-        
+
         res.status(200).json({ message: "Case Study deleted successfully" });
 
     } catch (error) {
@@ -96,7 +93,7 @@ caseStudyRouter.delete("/:id", auth, async (req, res) => {
     }
 })
 
-caseStudyRouter.post("/:id/comments", auth, async (req, res) => {
+caseStudyRouter.post("/:id/comments", async (req, res) => {
     const caseStudyId = req.params.id;
     const { comment } = req.body;
 
@@ -118,7 +115,7 @@ caseStudyRouter.post("/:id/comments", auth, async (req, res) => {
         res.status(200).json({ message: "Comment added successfully" });
 
     } catch (error) {
-        res.status(500).json({ message: "Error adding comment"});
+        res.status(500).json({ message: "Error adding comment" });
     }
 });
 

@@ -7,9 +7,9 @@ const nodemailer = require('nodemailer');
 const { multerConfig } = require("../middleware/upload.middleware");
 const path = require("path");
 const validateFileSize = require("../middleware/validateFileSize.middleware");
-const { access } = require("../middleware/access.middleware");
 const { auth } = require("../middleware/auth.middleware");
 const crypto = require('crypto');
+require("dotenv").config();
 
 const baseDir = path.join(__dirname, '../uploads/profileImages');
 const folders = { profilePic: 'profilePic', coverImage: 'coverImage' };
