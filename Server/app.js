@@ -10,21 +10,26 @@ const { blogRouter } = require("./routes/blog.route");
 const { caseStudyRouter } = require("./routes/caseStudy.route");
 const { courseRouter } = require("./routes/course.route");
 const { leadsRouter } = require("./routes/leads.route");
-// const wishlistRouter = require("./routes/wishlist.route");
+const { promptLibraryRouter } = require("./routes/promptLibrary.route");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+//Swanirbhar.org.in
 app.use("/user", userRouter);
 app.use("/course", courseRouter);
 app.use("/article", articleRouter);
 app.use("/blog", blogRouter);
 app.use("/caseStudy", caseStudyRouter)
-app.use("/leads", leadsRouter)
-// app.use("/wishlist", wishlistRouter)
-app.use("/aiBot", aiRouter)
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
+
+//Swanirbhar.in
+app.use("/leads", leadsRouter)
+app.use("/promptLibrary", promptLibraryRouter)
+app.use("/aiBot", aiRouter)
+
 
 app.get('/', (req, res) => {
     res.json("Welcome To Swanirbhar");

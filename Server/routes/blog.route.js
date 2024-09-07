@@ -3,8 +3,9 @@ const { auth } = require("../middleware/auth.middleware");
 const path = require("path");
 const multer = require("multer");
 const { diskStorage } = require("../middleware/upload.middleware");
-const { blogModel } = require("../model/blog.model");
+
 const { userModel } = require("../model/user.model");
+const { blogModel } = require("../model/blog.model");
 
 const blogRouter = express.Router();
 
