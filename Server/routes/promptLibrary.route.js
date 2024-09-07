@@ -4,14 +4,14 @@ const promptLibraryRouter = express.Router();
 
 promptLibraryRouter.get("/", async (req, res) => {
     try {
-        const { title, category, page = 1, limit = 100 } = req.query;
+        const { Title, Category, page = 1, limit = 100 } = req.query;
         const query = {};
 
-        if (title) {
-            query.title = { $regex: title, $options: 'i' };
+        if (Title) {
+            query.Title = { $regex: Title, $options: 'i' };
         }
-        if (category) {
-            query.category = category;
+        if (Category) {
+            query.Category = Category;
         }
         const options = {
             page: parseInt(page, 10),
