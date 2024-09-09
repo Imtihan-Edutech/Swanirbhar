@@ -59,11 +59,8 @@ const RegisterForm = () => {
                     {!otpSent ? (
                         <Form form={registerForm} onFinish={sendVerificationOTP} layout="vertical">
                             <div className="form-row">
-                                <Form.Item name="firstname" rules={[{ required: true, message: 'First name is required' }]} style={{ flex: "1" }}>
-                                    <Input className='form-input-field' placeholder="First name" />
-                                </Form.Item>
-                                <Form.Item name="lastname" rules={[{ required: true, message: 'Last name is required' }]} style={{ flex: "1" }}>
-                                    <Input className='form-input' placeholder="Last name" />
+                                <Form.Item name="fullName" rules={[{ required: true, message: 'Full name is required' }]} style={{ flex: "1" }}>
+                                    <Input className='form-input-field' placeholder="Full name" />
                                 </Form.Item>
                             </div>
                             <div className="form-row">
@@ -119,7 +116,7 @@ const RegisterForm = () => {
                     ) : (
                         <Form form={otpForm} onFinish={handleRegister} layout="vertical">
                             <Form.Item name="verificationOTP" rules={[{ required: true, message: 'Please input the OTP sent to your email!' }]}>
-                                <Input.OTP placeholder="Enter OTP" />
+                                <Input.OTP />
                             </Form.Item>
                             <Form.Item>
                                 <Button type="primary" className="form-button" loading={loading} htmlType="submit">

@@ -77,7 +77,7 @@ userRouter.post("/sendVerificationOTP", async (req, res) => {
             to: email,
             subject: 'Swanirbhar Account Verification OTP',
             html: `
-        <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; margin: 0; text-align: center;">
+        <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 10px; margin: 0; text-align: center;">
             <div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                 <h2 style="color: #333; font-size: 24px;">Hello ${fullName},</h2>
                 <p style="font-size: 16px; color: #666;">Thank you for registering with Swanirbhar. We're excited to have you on board!</p>

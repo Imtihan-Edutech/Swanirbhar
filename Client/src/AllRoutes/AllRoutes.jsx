@@ -7,7 +7,6 @@ import Dashboard from '../components/Dashboard';
 import PrivateRoute from './PrivateRoutes';
 import VerifyCode from '../pages/VerifyCode';
 import SetPassword from '../pages/SetPassword';
-import Landing from '../components/Landing';
 
 
 const AllRoutes = () => {
@@ -15,7 +14,7 @@ const AllRoutes = () => {
 
     return (
         <Routes>
-            <Route path="/" element={isUser ? <Navigate to="/dashboard" /> : <Landing />} />
+            <Route path="/" element={isUser ? <Navigate to="/dashboard" /> : <LoginForm/>} />
             <Route path="/login" element={<LoginForm />} />
             <Route path="/register" element={<RegisterForm />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
