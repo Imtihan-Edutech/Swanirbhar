@@ -32,8 +32,8 @@ userRouter.get("/", auth, async (req, res) => {
         }
 
         const userDetails = await userModel.paginate(query);
-
         res.status(200).json(userDetails.docs);
+
     } catch (error) {
         res.status(500).json({ message: "Unable to retrieve data. Please try again later." });
     }
@@ -111,7 +111,7 @@ userRouter.post("/sendVerificationOTP", async (req, res) => {
 
 // Register a new user with OTP verification
 userRouter.put("/register/:email", async (req, res) => {
-    const { fullName, password, phoneNumber, verificationOTP } = req.body;
+    const { fullName, password, verificationOTP } = req.body;
     const email = req.params.email;
 
     try {
@@ -128,7 +128,6 @@ userRouter.put("/register/:email", async (req, res) => {
 
             userDetails.fullName = fullName;
             userDetails.password = hash;
-            userDetails.phoneNumber = phoneNumber;
             userDetails.verificationOTP = null;
 
             await userDetails.save();
@@ -144,14 +143,19 @@ userRouter.post("/login", async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await userModel.findOne({ email }).select('+password');
+
         if (!user) {
             return res.status(400).json({ message: "Email does not exist, Please Sign Up" });
+        }
+
+        if(user.role === "suspended"){
+            return res.status(400).json({ message: "Accoutn is Suspended, Please contact Admin" });
         }
 
         const result = await bcrypt.compare(password, user.password);
         if (result) {
             const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY);
-            res.status(200).json({ message: "Login Successful", token, userId: user._id });
+            res.status(200).json({ message: "Login Successful", token, userId: user._id, role: user.role });
         } else {
             res.status(400).json({ message: "Incorrect Email or Password" });
         }
@@ -335,7 +339,7 @@ userRouter.put("/resetPassword", async (req, res) => {
 // update the etails for the user 
 userRouter.put("/updateDetails/:id", upload.fields([{ name: 'profilePic' }, { name: 'coverImage' }]), validateFileSize, async (req, res) => {
     const { id } = req.params;
-    const { fullName, phoneNumber, designation, educations, skills, experience, facebook, linkedin, github, twitter, youtube } = req.body;
+    const { fullName, phoneNumber,dateOfBirth,gender, designation, bio, educations, skills, experience, facebook, linkedin, github, twitter, youtube } = req.body;
 
     const profilePic = req.files['profilePic'] ? req.files['profilePic'][0].filename : undefined;
     const coverImage = req.files['coverImage'] ? req.files['coverImage'][0].filename : undefined;
@@ -348,10 +352,13 @@ userRouter.put("/updateDetails/:id", upload.fields([{ name: 'profilePic' }, { na
 
         if (fullName) user.fullName = fullName;
         if (phoneNumber) user.phoneNumber = phoneNumber;
+        if (dateOfBirth) user.dateOfBirth = new Date(dateOfBirth);
+        if (gender) user.gender = gender;
         if (designation) user.designation = designation;
-        if (educations) user.educations = JSON.parse(educations);
-        if (skills) user.skills = JSON.parse(skills);
-        if (experience) user.experience = JSON.parse(experience);
+        if (bio) user.bio = bio;
+        if (skills) user.skills = skills;
+        if (educations) user.educations = educations;
+        if (experience) user.experience = experience;
         if (profilePic) user.profilePic = profilePic;
         if (coverImage) user.coverImage = coverImage;
         if (facebook) user.socials.facebook = facebook;

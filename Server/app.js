@@ -11,6 +11,7 @@ const { caseStudyRouter } = require("./routes/caseStudy.route");
 const { courseRouter } = require("./routes/course.route");
 const { leadsRouter } = require("./routes/leads.route");
 const { promptLibraryRouter } = require("./routes/promptLibrary.route");
+const { projectRouter } = require("./routes/project.route");
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use("/course", courseRouter);
 app.use("/article", articleRouter);
 app.use("/blog", blogRouter);
 app.use("/caseStudy", caseStudyRouter)
+app.use("/project",projectRouter);
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
 
 //Swanirbhar.in

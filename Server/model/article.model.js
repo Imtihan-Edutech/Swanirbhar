@@ -5,7 +5,6 @@ const articleSchema = mongoose.Schema({
     title: { type: String },
     category: { type: String },
     coverImage: { type: String },
-    description:{type:String},
     content: { type: String },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 }, { versionKey: false, timestamps: true })

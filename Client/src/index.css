@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.sider-custom-scroll {
+    overflow: hidden;
+}
+
+.sider-custom-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.ant-menu-horizontal {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}

@@ -50,7 +50,7 @@ articleRouter.get("/", async (req, res) => {
 })
 
 articleRouter.post("/", auth, upload.single('coverImage'), async (req, res) => {
-    const { title, category, content, description } = req.body;
+    const { title, category, content } = req.body;
     try {
         const coverImage = req.file ? req.file.filename : undefined;
 
@@ -58,7 +58,6 @@ articleRouter.post("/", auth, upload.single('coverImage'), async (req, res) => {
             title,
             category,
             content,
-            description,
             coverImage,
             createdBy: req.user._id
         });
